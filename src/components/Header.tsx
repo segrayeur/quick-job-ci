@@ -1,0 +1,51 @@
+import { Button } from "@/components/ui/button";
+import { MapPin, Plus, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+const Header = () => {
+  const navigate = useNavigate();
+
+  const handlePublishClick = () => {
+    navigate("/publish");
+  };
+
+  const handleLogoClick = () => {
+    navigate("/");
+  };
+
+  return (
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto px-4">
+        <div className="flex h-16 items-center justify-between">
+          <div 
+            className="flex items-center space-x-2 cursor-pointer" 
+            onClick={handleLogoClick}
+          >
+            <div className="flex items-center space-x-2">
+              <div className="h-8 w-8 rounded-lg bg-gradient-primary flex items-center justify-center">
+                <span className="text-white font-bold text-sm">QJ</span>
+              </div>
+              <h1 className="text-xl font-bold text-foreground">QuickJob CI</h1>
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="sm" className="hidden sm:flex">
+              <MapPin className="h-4 w-4 mr-1" />
+              Abidjan
+            </Button>
+            <Button variant="default" size="sm" onClick={handlePublishClick}>
+              <Plus className="h-4 w-4 mr-1" />
+              Publier
+            </Button>
+            <Button variant="ghost" size="sm">
+              <User className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default Header;
