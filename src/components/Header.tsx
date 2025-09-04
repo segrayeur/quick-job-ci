@@ -1,9 +1,30 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { MapPin, Plus, User } from "lucide-react";
+import { MapPin, Plus, User, LogIn, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { User as SupabaseUser, Session } from "@supabase/supabase-js";
 
 const Header = () => {
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+      }
+    );
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handlePublishClick = () => {
     navigate("/publish");
@@ -11,6 +32,14 @@ const Header = () => {
 
   const handleLogoClick = () => {
     navigate("/");
+  };
+
+  const handleAuthClick = () => {
+    if (user) {
+      navigate("/dashboard");
+    } else {
+      navigate("/auth");
+    }
   };
 
   return (
@@ -38,8 +67,18 @@ const Header = () => {
               <Plus className="h-4 w-4 mr-1" />
               Publier
             </Button>
-            <Button variant="ghost" size="sm">
-              <User className="h-4 w-4" />
+            <Button variant="ghost" size="sm" onClick={handleAuthClick}>
+              {user ? (
+                <>
+                  <User className="h-4 w-4 mr-1" />
+                  <span className="hidden sm:inline">Dashboard</span>
+                </>
+              ) : (
+                <>
+                  <LogIn className="h-4 w-4 mr-1" />
+                  <span className="hidden sm:inline">Connexion</span>
+                </>
+              )}
             </Button>
           </div>
         </div>

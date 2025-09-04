@@ -2,6 +2,8 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import JobCard from "@/components/JobCard";
 import LocationFilter from "@/components/LocationFilter";
+import ChatBot from "@/components/ChatBot";
+import ChatBot from "@/components/ChatBot";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Briefcase, TrendingUp, Users } from "lucide-react";
