@@ -43,45 +43,39 @@ export type Database = {
       }
       applications: {
         Row: {
-          candidate_id: string
-          created_at: string
+          created_at: string | null
           id: string
-          job_id: string
-          message: string | null
-          status: Database["public"]["Enums"]["application_status"]
-          updated_at: string
+          job_id: string | null
+          status: string | null
+          student_id: string | null
         }
         Insert: {
-          candidate_id: string
-          created_at?: string
+          created_at?: string | null
           id?: string
-          job_id: string
-          message?: string | null
-          status?: Database["public"]["Enums"]["application_status"]
-          updated_at?: string
+          job_id?: string | null
+          status?: string | null
+          student_id?: string | null
         }
         Update: {
-          candidate_id?: string
-          created_at?: string
+          created_at?: string | null
           id?: string
-          job_id?: string
-          message?: string | null
-          status?: Database["public"]["Enums"]["application_status"]
-          updated_at?: string
+          job_id?: string | null
+          status?: string | null
+          student_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "applications_candidate_id_fkey"
-            columns: ["candidate_id"]
+            foreignKeyName: "applications_job_id_fkey"
+            columns: ["job_id"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "jobs"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "applications_job_id_fkey"
             columns: ["job_id"]
             isOneToOne: false
-            referencedRelation: "jobs"
+            referencedRelation: "jobs_public"
             referencedColumns: ["id"]
           },
         ]
@@ -344,7 +338,66 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      jobs_public: {
+        Row: {
+          amount: number | null
+          category: string | null
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          id: string | null
+          location: string | null
+          recruiter_id: string | null
+          status: Database["public"]["Enums"]["job_status"] | null
+          tenant_id: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          amount?: number | null
+          category?: string | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string | null
+          location?: string | null
+          recruiter_id?: string | null
+          status?: Database["public"]["Enums"]["job_status"] | null
+          tenant_id?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number | null
+          category?: string | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string | null
+          location?: string | null
+          recruiter_id?: string | null
+          status?: Database["public"]["Enums"]["job_status"] | null
+          tenant_id?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jobs_recruiter_id_fkey"
+            columns: ["recruiter_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jobs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       get_user_role: {
