@@ -53,10 +53,10 @@ const FloatingBubbles = () => {
   ];
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
       {/* Action Bubbles */}
       <div className={cn(
-        "flex flex-col-reverse gap-3 mb-4 transition-all duration-500 transform origin-bottom",
+        "flex flex-col gap-3 mb-4 transition-all duration-500 transform origin-bottom",
         isOpen ? "scale-100 opacity-100" : "scale-75 opacity-0 pointer-events-none"
       )}>
         {bubbleActions.map((bubble, index) => {
@@ -65,7 +65,7 @@ const FloatingBubbles = () => {
             <div
               key={index}
               className={cn(
-                "transition-all duration-300 animate-fade-in",
+                "relative group transition-all duration-300",
                 isOpen ? "delay-100" : ""
               )}
               style={{ 
@@ -85,7 +85,7 @@ const FloatingBubbles = () => {
               </Button>
               
               {/* Tooltip */}
-              <div className="absolute right-16 top-1/2 -translate-y-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity">
+              <div className="absolute right-14 top-1/2 -translate-y-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-10">
                 {bubble.label}
               </div>
             </div>

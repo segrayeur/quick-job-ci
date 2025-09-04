@@ -21,6 +21,7 @@ All colors MUST be HSL.
     --primary: 142 76% 36%;  /* #28a745 */
     --primary-foreground: 0 0% 100%;
     --primary-light: 142 69% 58%;
+    --primary-glow: 142 69% 58%;  /* Same as primary-light for consistency */
     --primary-dark: 142 84% 24%;
 
     --secondary: 0 0% 96.1%;
