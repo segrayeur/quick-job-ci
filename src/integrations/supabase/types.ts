@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          messages: Json
+          session_type: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          messages?: Json
+          session_type: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          messages?: Json
+          session_type?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       applications: {
         Row: {
           candidate_id: string
@@ -58,6 +85,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      interaction_logs: {
+        Row: {
+          anonymous_user_id: string | null
+          created_at: string
+          id: string
+          interaction_type: string
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          anonymous_user_id?: string | null
+          created_at?: string
+          id?: string
+          interaction_type: string
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          anonymous_user_id?: string | null
+          created_at?: string
+          id?: string
+          interaction_type?: string
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       jobs: {
         Row: {
@@ -164,7 +218,10 @@ export type Database = {
           next_payment_date: string | null
           paystack_subscription_id: string | null
           plan: string
+          plan_id: string | null
+          renew_date: string | null
           status: Database["public"]["Enums"]["subscription_status"]
+          trial_end_date: string | null
           updated_at: string
           user_id: string
         }
@@ -176,7 +233,10 @@ export type Database = {
           next_payment_date?: string | null
           paystack_subscription_id?: string | null
           plan: string
+          plan_id?: string | null
+          renew_date?: string | null
           status?: Database["public"]["Enums"]["subscription_status"]
+          trial_end_date?: string | null
           updated_at?: string
           user_id: string
         }
@@ -188,7 +248,10 @@ export type Database = {
           next_payment_date?: string | null
           paystack_subscription_id?: string | null
           plan?: string
+          plan_id?: string | null
+          renew_date?: string | null
           status?: Database["public"]["Enums"]["subscription_status"]
+          trial_end_date?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -292,7 +355,12 @@ export type Database = {
     Enums: {
       application_status: "pending" | "accepted" | "rejected"
       job_status: "open" | "closed" | "in_progress"
-      subscription_status: "active" | "inactive" | "cancelled" | "past_due"
+      subscription_status:
+        | "active"
+        | "inactive"
+        | "cancelled"
+        | "past_due"
+        | "trialing"
       user_role: "admin" | "recruiter" | "candidate"
     }
     CompositeTypes: {
@@ -423,7 +491,13 @@ export const Constants = {
     Enums: {
       application_status: ["pending", "accepted", "rejected"],
       job_status: ["open", "closed", "in_progress"],
-      subscription_status: ["active", "inactive", "cancelled", "past_due"],
+      subscription_status: [
+        "active",
+        "inactive",
+        "cancelled",
+        "past_due",
+        "trialing",
+      ],
       user_role: ["admin", "recruiter", "candidate"],
     },
   },

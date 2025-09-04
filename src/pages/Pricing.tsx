@@ -1,16 +1,74 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Check, Sparkles, Users, Building, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import ChatBot from "@/components/ChatBot";
 import FloatingBubbles from "@/components/FloatingBubbles";
 
 const Pricing = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState<string | null>(null);
+
+  const handleSubscribe = async (planType: string) => {
+    if (planType === 'free') {
+      navigate('/auth');
+      return;
+    }
+
+    setIsLoading(planType);
+    
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Connexion requise",
+          description: "Veuillez vous connecter pour souscrire à un plan premium",
+          variant: "destructive"
+        });
+        navigate('/auth');
+        return;
+      }
+
+      // Create subscription with Paystack
+      const { data, error } = await supabase.functions.invoke('create-paystack-subscription', {
+        body: {
+          email: user.email,
+          plan: planType
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.authorization_url) {
+        // Redirect to Paystack checkout
+        window.open(data.authorization_url, '_blank');
+        
+        toast({
+          title: "Redirection vers Paystack",
+          description: "Vous allez être redirigé vers la page de paiement sécurisé",
+        });
+      }
+    } catch (error) {
+      console.error('Subscription error:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer l'abonnement. Veuillez réessayer.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(null);
+    }
+  };
 
   const plans = [
     {
+      id: 'free',
       name: "Pour les Jeunes",
       price: "Gratuit",
       period: "toujours",
@@ -19,7 +77,7 @@ const Pricing = () => {
       description: "Parfait pour débuter votre carrière",
       features: [
         "Consulter tous les jobs gratuitement",
-        "Postuler directement aux offres",
+        "Postuler directement aux offres", 
         "Accès au chatbot d'aide",
         "Support communautaire"
       ],
@@ -29,6 +87,7 @@ const Pricing = () => {
       gradient: "from-blue-500/10 to-cyan-500/10"
     },
     {
+      id: 'premium',
       name: "Pour les Recruteurs",
       price: "10 000 FCFA",
       period: "par mois",
@@ -39,32 +98,33 @@ const Pricing = () => {
         "✨ Essai gratuit 7 jours inclus !",
         "Poster des annonces illimitées",
         "Tableau de bord recruteur complet",
-        "Assistance prioritaire",
+        "Assistance prioritaire WhatsApp",
         "Statistiques détaillées",
-        "Gestion des candidatures"
+        "Gestion des candidatures avancée"
       ],
-      buttonText: "Essayer 7 jours gratuits",
+      buttonText: "Commencer l'essai gratuit",
       buttonVariant: "default" as const,
       popular: true,
       gradient: "from-orange-500/10 to-red-500/10"
     },
     {
+      id: 'enterprise',
       name: "Pour les Entreprises",
-      price: "25 000 FCFA",
+      price: "25 000 FCFA", 
       period: "par mois",
       badge: "🚀 Pro",
       badgeVariant: "default" as const,
       description: "Solution complète pour les entreprises",
       features: [
         "✨ Essai gratuit 7 jours inclus !",
-        "Poster illimité + priorité",
-        "Tableau de bord complet avancé",
+        "Poster illimité + mise en avant",
         "Équipe multi-utilisateurs",
-        "API et intégrations",
+        "Branding personnalisé",
+        "API et intégrations avancées",
         "Support dédié 24/7",
         "Rapports personnalisés"
       ],
-      buttonText: "Essayer 7 jours gratuits",
+      buttonText: "Commencer l'essai gratuit",
       buttonVariant: "default" as const,
       popular: false,
       gradient: "from-purple-500/10 to-pink-500/10"
@@ -150,9 +210,10 @@ const Pricing = () => {
                 <Button 
                   variant={plan.buttonVariant} 
                   className="w-full py-6 text-base font-medium transition-all duration-300 hover:scale-105"
-                  onClick={() => navigate('/auth')}
+                  onClick={() => handleSubscribe(plan.id)}
+                  disabled={isLoading === plan.id}
                 >
-                  {plan.buttonText}
+                  {isLoading === plan.id ? "Traitement..." : plan.buttonText}
                 </Button>
               </CardContent>
             </Card>

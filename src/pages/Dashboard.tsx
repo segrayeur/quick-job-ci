@@ -132,7 +132,7 @@ const Dashboard = () => {
           .eq('user_id', profile.id)
           .single();
         
-        setSubscription(subData);
+        setSubscription(subData as any);
       } else if (profile?.role === 'candidate') {
         // Fetch applications for candidates
         const { data: appsData } = await supabase

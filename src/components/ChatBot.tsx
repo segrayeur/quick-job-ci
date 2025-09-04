@@ -99,7 +99,7 @@ const ChatBot = () => {
       {/* Chat Window */}
       {isOpen && (
         <Card className="fixed bottom-6 right-6 w-80 h-96 shadow-elevated z-50 border-0 bg-background">
-          <CardHeader className="bg-gradient-primary text-white p-4 rounded-t-lg">
+      <CardHeader className="bg-gradient-primary text-white p-4 rounded-t-lg">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg font-semibold">
                 Assistant QuickJob CI
