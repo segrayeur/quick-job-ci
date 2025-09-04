@@ -11,9 +11,26 @@ interface JobCardProps {
   timePosted: string;
   rating?: number;
   category?: string;
+  jobId?: string;
+  showContactInfo?: boolean;
+  contactPhone?: string;
+  contactWhatsapp?: string;
+  onApply?: () => void;
 }
 
-const JobCard = ({ title, description, amount, location, timePosted, rating, category }: JobCardProps) => {
+const JobCard = ({ 
+  title, 
+  description, 
+  amount, 
+  location, 
+  timePosted, 
+  rating, 
+  category, 
+  showContactInfo = false,
+  contactPhone,
+  contactWhatsapp,
+  onApply
+}: JobCardProps) => {
   return (
     <Card className="w-full shadow-card hover:shadow-elevated transition-all duration-300 border-l-4 border-l-primary">
       <CardHeader className="pb-3">
@@ -46,9 +63,29 @@ const JobCard = ({ title, description, amount, location, timePosted, rating, cat
         )}
       </CardContent>
       
-      <CardFooter className="pt-0">
-        <Button className="w-full bg-gradient-primary hover:opacity-90 transition-opacity">
-          Postuler maintenant
+      <CardFooter className="pt-0 space-y-2">
+        {showContactInfo && (contactPhone || contactWhatsapp) && (
+          <div className="w-full space-y-2 mb-2">
+            <p className="text-sm font-medium text-foreground">Contact du recruteur :</p>
+            {contactPhone && (
+              <div className="flex items-center text-sm text-muted-foreground">
+                <span className="font-medium">Téléphone: </span>
+                <span className="ml-1">{contactPhone}</span>
+              </div>
+            )}
+            {contactWhatsapp && (
+              <div className="flex items-center text-sm text-muted-foreground">
+                <span className="font-medium">WhatsApp: </span>
+                <span className="ml-1">{contactWhatsapp}</span>
+              </div>
+            )}
+          </div>
+        )}
+        <Button 
+          className="w-full bg-gradient-primary hover:opacity-90 transition-opacity"
+          onClick={onApply}
+        >
+          {showContactInfo ? "Contacter le recruteur" : "Postuler maintenant"}
         </Button>
       </CardFooter>
     </Card>

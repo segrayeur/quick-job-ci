@@ -52,10 +52,22 @@ interface Job {
 
 interface Application {
   id: string;
-  status: 'pending' | 'accepted' | 'rejected';
+  status: string;
   message?: string;
   created_at: string;
-  job: Job;
+  job: {
+    id: string;
+    title: string;
+    description: string;
+    amount: number;
+    currency: string;
+    location: string;
+    category: string;
+    status: string;
+    created_at: string;
+    contact_phone?: string;
+    contact_whatsapp?: string;
+  };
 }
 
 interface Subscription {
@@ -141,10 +153,10 @@ const Dashboard = () => {
             *,
             job:jobs(*)
           `)
-          .eq('candidate_id', profile.id)
+          .eq('student_id', profile.id)
           .order('created_at', { ascending: false });
         
-        setApplications(appsData || []);
+        setApplications(appsData as any || []);
       }
     } catch (error) {
       console.error('Error fetching user data:', error);

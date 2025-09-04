@@ -71,13 +71,6 @@ export type Database = {
             referencedRelation: "jobs"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "applications_job_id_fkey"
-            columns: ["job_id"]
-            isOneToOne: false
-            referencedRelation: "jobs_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       interaction_logs: {
@@ -338,66 +331,7 @@ export type Database = {
       }
     }
     Views: {
-      jobs_public: {
-        Row: {
-          amount: number | null
-          category: string | null
-          created_at: string | null
-          currency: string | null
-          description: string | null
-          id: string | null
-          location: string | null
-          recruiter_id: string | null
-          status: Database["public"]["Enums"]["job_status"] | null
-          tenant_id: string | null
-          title: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          amount?: number | null
-          category?: string | null
-          created_at?: string | null
-          currency?: string | null
-          description?: string | null
-          id?: string | null
-          location?: string | null
-          recruiter_id?: string | null
-          status?: Database["public"]["Enums"]["job_status"] | null
-          tenant_id?: string | null
-          title?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          amount?: number | null
-          category?: string | null
-          created_at?: string | null
-          currency?: string | null
-          description?: string | null
-          id?: string | null
-          location?: string | null
-          recruiter_id?: string | null
-          status?: Database["public"]["Enums"]["job_status"] | null
-          tenant_id?: string | null
-          title?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "jobs_recruiter_id_fkey"
-            columns: ["recruiter_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "jobs_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "tenants"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
       get_user_role: {
