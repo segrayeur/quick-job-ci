@@ -4,6 +4,7 @@ import { MapPin, Plus, User, LogIn, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser, Session } from "@supabase/supabase-js";
+import MobileMenu from "./MobileMenu";
 
 const Header = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
@@ -38,7 +39,7 @@ const Header = () => {
     if (user) {
       navigate("/dashboard");
     } else {
-      navigate("/auth");
+      navigate("/connexion");
     }
   };
 
@@ -59,27 +60,43 @@ const Header = () => {
           </div>
           
           <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="sm" className="hidden sm:flex">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="hidden md:flex"
+              onClick={() => navigate("/trouver-un-job")}
+            >
               <MapPin className="h-4 w-4 mr-1" />
-              Abidjan
+              Trouver un job
             </Button>
-            <Button variant="default" size="sm" onClick={handlePublishClick}>
+            <Button variant="default" size="sm" onClick={handlePublishClick} className="hidden sm:flex">
               <Plus className="h-4 w-4 mr-1" />
               Publier
             </Button>
-            <Button variant="ghost" size="sm" onClick={handleAuthClick}>
+            {!user && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => navigate("/inscription")}
+                className="hidden md:flex"
+              >
+                S'inscrire
+              </Button>
+            )}
+            <Button variant="ghost" size="sm" onClick={handleAuthClick} className="hidden sm:flex">
               {user ? (
                 <>
                   <User className="h-4 w-4 mr-1" />
-                  <span className="hidden sm:inline">Dashboard</span>
+                  <span className="hidden md:inline">Dashboard</span>
                 </>
               ) : (
                 <>
                   <LogIn className="h-4 w-4 mr-1" />
-                  <span className="hidden sm:inline">Connexion</span>
+                  <span className="hidden md:inline">Connexion</span>
                 </>
               )}
             </Button>
+            <MobileMenu user={user} />
           </div>
         </div>
       </div>

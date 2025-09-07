@@ -94,10 +94,10 @@ const Index = () => {
             <Button 
               size="lg" 
               className="flex-1 bg-white text-primary hover:bg-white/90 transition-colors"
-              onClick={() => document.getElementById('jobs-section')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => navigate("/trouver-un-job")}
             >
               <Briefcase className="mr-2 h-5 w-5" />
-              Voir les jobs
+              Trouver un job
             </Button>
             <Button 
               size="lg" 
@@ -107,6 +107,22 @@ const Index = () => {
             >
               <TrendingUp className="mr-2 h-5 w-5" />
               Publier un job
+            </Button>
+          </div>
+          
+          {/* Call-to-action pour nouveaux utilisateurs */}
+          <div className="mt-6 text-center">
+            <p className="text-white/80 mb-4">
+              Nouveau sur QuickJob CI ?
+            </p>
+            <Button 
+              size="lg" 
+              variant="secondary"
+              onClick={() => navigate("/inscription")}
+              className="bg-white/10 text-white border border-white/20 hover:bg-white/20"
+            >
+              <Users className="mr-2 h-5 w-5" />
+              Créer un compte gratuit
             </Button>
           </div>
         </div>
@@ -132,6 +148,38 @@ const Index = () => {
               <div className="text-2xl md:text-3xl font-bold text-primary">11</div>
               <div className="text-sm text-muted-foreground">Quartiers</div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Actions Section */}
+      <section className="py-6 bg-accent/20 border-b">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row gap-4 justify-center">
+            <Button 
+              size="lg" 
+              className="bg-gradient-primary hover:opacity-90 transition-opacity"
+              onClick={() => navigate("/trouver-un-job")}
+            >
+              <Search className="mr-2 h-5 w-5" />
+              Rechercher un emploi
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline"
+              onClick={() => navigate("/inscription")}
+            >
+              <Users className="mr-2 h-5 w-5" />
+              Créer mon compte
+            </Button>
+            <Button 
+              size="lg" 
+              variant="secondary"
+              onClick={handlePublishClick}
+            >
+              <Briefcase className="mr-2 h-5 w-5" />
+              Publier une offre
+            </Button>
           </div>
         </div>
       </section>
