@@ -1,13 +1,25 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Check, Sparkles, Users, Building, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import ChatBot from "@/components/ChatBot";
+import { supabase } from "@/integrations/supabase/client";
+import { 
+  ArrowLeft, 
+  Check, 
+  Star, 
+  Users, 
+  Briefcase, 
+  Crown,
+  Shield,
+  Zap,
+  Phone,
+  Sparkles,
+  MessageCircle
+} from "lucide-react";
 import FloatingBubbles from "@/components/FloatingBubbles";
+import ChatBot from "@/components/ChatBot";
 
 const Pricing = () => {
   const navigate = useNavigate();
@@ -36,18 +48,14 @@ const Pricing = () => {
       }
 
       // Create subscription with Paystack
-      const { data, error } = await supabase.functions.invoke('create-paystack-subscription', {
-        body: {
-          email: user.email,
-          plan: planType
-        }
+      const { data, error } = await supabase.functions.invoke('create-paystack-subscription-enhanced', {
+        body: { plan: planType }
       });
 
       if (error) throw error;
 
-      if (data.authorization_url) {
-        // Redirect to Paystack checkout
-        window.open(data.authorization_url, '_blank');
+      if (data.success) {
+        window.open(data.payment_url, '_blank');
         
         toast({
           title: "Redirection vers Paystack",

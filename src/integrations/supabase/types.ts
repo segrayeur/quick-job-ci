@@ -73,6 +73,97 @@ export type Database = {
           },
         ]
       }
+      candidate_favorites: {
+        Row: {
+          candidate_id: string
+          created_at: string | null
+          id: string
+          recruiter_id: string
+        }
+        Insert: {
+          candidate_id: string
+          created_at?: string | null
+          id?: string
+          recruiter_id: string
+        }
+        Update: {
+          candidate_id?: string
+          created_at?: string | null
+          id?: string
+          recruiter_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_favorites_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_favorites_recruiter_id_fkey"
+            columns: ["recruiter_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      candidate_ratings: {
+        Row: {
+          application_id: string | null
+          candidate_id: string
+          comment: string | null
+          created_at: string | null
+          id: string
+          rating: number | null
+          recruiter_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          application_id?: string | null
+          candidate_id: string
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          rating?: number | null
+          recruiter_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          application_id?: string | null
+          candidate_id?: string
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          rating?: number | null
+          recruiter_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_ratings_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_ratings_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_ratings_recruiter_id_fkey"
+            columns: ["recruiter_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interaction_logs: {
         Row: {
           anonymous_user_id: string | null
@@ -103,12 +194,15 @@ export type Database = {
       jobs: {
         Row: {
           amount: number
+          applications_count: number | null
           category: string | null
+          company_name: string | null
           contact_phone: string | null
           contact_whatsapp: string | null
           created_at: string
           currency: string
           description: string
+          district: string | null
           id: string
           location: string
           recruiter_id: string
@@ -116,15 +210,19 @@ export type Database = {
           tenant_id: string | null
           title: string
           updated_at: string
+          views_count: number | null
         }
         Insert: {
           amount: number
+          applications_count?: number | null
           category?: string | null
+          company_name?: string | null
           contact_phone?: string | null
           contact_whatsapp?: string | null
           created_at?: string
           currency?: string
           description: string
+          district?: string | null
           id?: string
           location: string
           recruiter_id: string
@@ -132,15 +230,19 @@ export type Database = {
           tenant_id?: string | null
           title: string
           updated_at?: string
+          views_count?: number | null
         }
         Update: {
           amount?: number
+          applications_count?: number | null
           category?: string | null
+          company_name?: string | null
           contact_phone?: string | null
           contact_whatsapp?: string | null
           created_at?: string
           currency?: string
           description?: string
+          district?: string | null
           id?: string
           location?: string
           recruiter_id?: string
@@ -148,6 +250,7 @@ export type Database = {
           tenant_id?: string | null
           title?: string
           updated_at?: string
+          views_count?: number | null
         }
         Relationships: [
           {
@@ -196,18 +299,59 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscriptions: {
         Row: {
           amount: number | null
           created_at: string
           currency: string | null
           id: string
+          jobs_limit: number | null
+          jobs_published: number | null
           next_payment_date: string | null
           paystack_subscription_id: string | null
           plan: string
           plan_id: string | null
           renew_date: string | null
           status: Database["public"]["Enums"]["subscription_status"]
+          trial_days: number | null
           trial_end_date: string | null
           updated_at: string
           user_id: string
@@ -217,12 +361,15 @@ export type Database = {
           created_at?: string
           currency?: string | null
           id?: string
+          jobs_limit?: number | null
+          jobs_published?: number | null
           next_payment_date?: string | null
           paystack_subscription_id?: string | null
           plan: string
           plan_id?: string | null
           renew_date?: string | null
           status?: Database["public"]["Enums"]["subscription_status"]
+          trial_days?: number | null
           trial_end_date?: string | null
           updated_at?: string
           user_id: string
@@ -232,12 +379,15 @@ export type Database = {
           created_at?: string
           currency?: string | null
           id?: string
+          jobs_limit?: number | null
+          jobs_published?: number | null
           next_payment_date?: string | null
           paystack_subscription_id?: string | null
           plan?: string
           plan_id?: string | null
           renew_date?: string | null
           status?: Database["public"]["Enums"]["subscription_status"]
+          trial_days?: number | null
           trial_end_date?: string | null
           updated_at?: string
           user_id?: string
@@ -278,42 +428,60 @@ export type Database = {
       }
       users: {
         Row: {
+          availability: string | null
           created_at: string
+          cv_url: string | null
           email: string
+          experience: string | null
           first_name: string | null
           id: string
+          is_verified: boolean | null
           last_name: string | null
           location: string | null
           phone: string | null
+          profile_complete: boolean | null
           role: Database["public"]["Enums"]["user_role"]
+          skills: string[] | null
           tenant_id: string | null
           updated_at: string
           user_id: string
           whatsapp: string | null
         }
         Insert: {
+          availability?: string | null
           created_at?: string
+          cv_url?: string | null
           email: string
+          experience?: string | null
           first_name?: string | null
           id?: string
+          is_verified?: boolean | null
           last_name?: string | null
           location?: string | null
           phone?: string | null
+          profile_complete?: boolean | null
           role?: Database["public"]["Enums"]["user_role"]
+          skills?: string[] | null
           tenant_id?: string | null
           updated_at?: string
           user_id: string
           whatsapp?: string | null
         }
         Update: {
+          availability?: string | null
           created_at?: string
+          cv_url?: string | null
           email?: string
+          experience?: string | null
           first_name?: string | null
           id?: string
+          is_verified?: boolean | null
           last_name?: string | null
           location?: string | null
           phone?: string | null
+          profile_complete?: boolean | null
           role?: Database["public"]["Enums"]["user_role"]
+          skills?: string[] | null
           tenant_id?: string | null
           updated_at?: string
           user_id?: string

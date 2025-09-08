@@ -79,8 +79,8 @@ const FloatingBubbles = () => {
            }}>
         {/* Action Bubbles */}
         <div className={cn(
-          "flex flex-row gap-3 mr-4 transition-all duration-300 transform origin-right",
-          isOpen ? "scale-100 opacity-100 translate-x-0" : "scale-90 opacity-0 translate-x-8 pointer-events-none"
+          "flex flex-col gap-3 mb-4 transition-all duration-300 transform origin-bottom",
+          isOpen ? "scale-100 opacity-100 translate-y-0" : "scale-90 opacity-0 translate-y-4 pointer-events-none"
         )}>
           {bubbleActions.map((bubble, index) => {
             const Icon = bubble.icon;

@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import AuthGuard from "@/components/AuthGuard";
 import JobCard from "@/components/JobCard";
+import EnhancedDashboard from "@/components/EnhancedDashboard";
 
 interface UserProfile {
   id: string;
@@ -256,6 +257,14 @@ const Dashboard = () => {
               </Button>
             </div>
           </div>
+
+          <EnhancedDashboard
+            userProfile={userProfile}
+            subscription={subscription}
+            jobs={jobs}
+            applications={applications}
+            onRefresh={() => fetchUserData(user?.id || '')}
+          />
 
           {userProfile?.role === 'recruiter' && (
             <div className="mb-6">
