@@ -79,8 +79,8 @@ const FloatingBubbles = () => {
            }}>
         {/* Action Bubbles */}
         <div className={cn(
-          "flex flex-col gap-3 mb-4 transition-all duration-500 transform origin-bottom",
-          isOpen ? "scale-100 opacity-100" : "scale-75 opacity-0 pointer-events-none"
+          "flex flex-row gap-3 mr-4 transition-all duration-300 transform origin-right",
+          isOpen ? "scale-100 opacity-100 translate-x-0" : "scale-90 opacity-0 translate-x-8 pointer-events-none"
         )}>
           {bubbleActions.map((bubble, index) => {
             const Icon = bubble.icon;
@@ -88,30 +88,31 @@ const FloatingBubbles = () => {
               <div
                 key={index}
                 className={cn(
-                  "relative group transition-all duration-300",
-                  isOpen ? "delay-100" : ""
+                  "relative group transition-all duration-200",
+                  isOpen ? "" : ""
                 )}
                 style={{ 
-                  transitionDelay: isOpen ? `${index * 100}ms` : '0ms' 
+                  transitionDelay: isOpen ? `${index * 50}ms` : `${(bubbleActions.length - index) * 50}ms` 
                 }}
               >
                 <Button
                   size="icon"
                   className={cn(
-                    "h-14 w-14 rounded-full shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl border-2 border-white/20",
+                    "h-12 w-12 rounded-full shadow-lg transition-all duration-200 hover:scale-110 hover:shadow-xl border-2 border-white/20",
                     bubble.color
                   )}
                   onClick={bubble.action}
                   aria-label={bubble.label}
                   role="button"
                 >
-                  <Icon className="h-5 w-5 text-white" />
+                  <Icon className="h-4 w-4 text-white" />
                   <span className="sr-only">{bubble.label}</span>
                 </Button>
                 
                 {/* Tooltip */}
-                <div className="absolute right-16 top-1/2 -translate-y-1/2 bg-black/90 text-white text-xs px-3 py-1 rounded-md whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-10 shadow-lg">
+                <div className="absolute bottom-14 left-1/2 -translate-x-1/2 bg-black/90 text-white text-xs px-2 py-1 rounded-md whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-10 shadow-lg">
                   {bubble.label}
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black/90"></div>
                 </div>
               </div>
             );
