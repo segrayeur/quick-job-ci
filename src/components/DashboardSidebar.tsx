@@ -58,11 +58,11 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
 
   const recruiterItems = [
     {
-      title: "Offres & Annonces",
+      title: "Jobs & Annonces publiés",
       url: "/dashboard",
       icon: Briefcase,
       subItems: [
-        { title: "Jobs publiés", url: "/dashboard?tab=jobs" },
+        { title: "Mes jobs publiés", url: "/dashboard?tab=jobs" },
         { title: "Candidatures reçues", url: "/dashboard?tab=applications" },
         { title: "Statistiques", url: "/dashboard?tab=stats" }
       ]

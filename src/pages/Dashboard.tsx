@@ -29,6 +29,7 @@ import AuthGuard from "@/components/AuthGuard";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import CandidateApplications from "@/components/CandidateApplications";
 import AvailableJobs from "@/components/AvailableJobs";
+import { LocationSelector } from "@/components/LocationSelector";
 
 interface UserProfile {
   id: string;
@@ -47,8 +48,8 @@ interface UserProfile {
   cv_url?: string;
   is_verified?: boolean;
   profile_complete?: boolean;
-  applications_created_count?: number;
-  is_vip_candidate?: boolean;
+  applications_created_count: number;
+  is_vip_candidate: boolean;
   vip_expiry_date?: string;
 }
 
@@ -103,6 +104,13 @@ const Dashboard = () => {
   const [applications, setApplications] = useState<Application[]>([]);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileForm, setProfileForm] = useState({
+    phone: '',
+    whatsapp: '',
+    location: '',
+    commune: '',
+    quartier: ''
+  });
   const [searchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'default';
   const navigate = useNavigate();
@@ -143,6 +151,20 @@ const Dashboard = () => {
         .eq('user_id', userId)
         .single();
       
+      if (profile) {
+        // Ensure applications_created_count and is_vip_candidate have default values
+        profile.applications_created_count = profile.applications_created_count || 0;
+        profile.is_vip_candidate = profile.is_vip_candidate || false;
+        
+        // Initialize profile form with current values
+        setProfileForm({
+          phone: profile.phone || '',
+          whatsapp: profile.whatsapp || '',
+          location: profile.location || '',
+          commune: profile.commune || '',
+          quartier: profile.quartier || ''
+        });
+      }
       setUserProfile(profile);
 
       if (profile?.role === 'recruiter') {
@@ -193,6 +215,40 @@ const Dashboard = () => {
       toast({
         title: "Erreur",
         description: "Erreur lors de la déconnexion",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const updateProfile = async () => {
+    if (!userProfile) return;
+
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({
+          phone: profileForm.phone,
+          whatsapp: profileForm.whatsapp,
+          location: profileForm.location,
+          commune: profileForm.commune,
+          quartier: profileForm.quartier
+        })
+        .eq('id', userProfile.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Profil mis à jour",
+        description: "Vos informations ont été sauvegardées avec succès."
+      });
+      
+      // Refresh user data
+      await fetchUserData(user.id);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour le profil",
         variant: "destructive"
       });
     }
@@ -257,10 +313,9 @@ const Dashboard = () => {
     if (userProfile.role === 'candidate') {
       switch (activeTab) {
         case 'applications':
+          return <CandidateApplications userProfile={userProfile} />;
         case 'accepted':
         case 'available':
-          return <CandidateApplications userProfile={userProfile} />;
-        case 'jobs-available':
           return <AvailableJobs userProfile={userProfile} />;
         case 'profile':
           return (
@@ -289,42 +344,39 @@ const Dashboard = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="phone">Téléphone</Label>
-                    <Input id="phone" value={userProfile.phone || ''} placeholder="Non renseigné" />
+                    <Input 
+                      id="phone" 
+                      value={profileForm.phone}
+                      onChange={(e) => setProfileForm({...profileForm, phone: e.target.value})}
+                      placeholder="Ex: +225 01 02 03 04 05" 
+                    />
                   </div>
                   <div>
                     <Label htmlFor="whatsapp">WhatsApp</Label>
-                    <Input id="whatsapp" value={userProfile.whatsapp || ''} placeholder="Non renseigné" />
+                    <Input 
+                      id="whatsapp" 
+                      value={profileForm.whatsapp}
+                      onChange={(e) => setProfileForm({...profileForm, whatsapp: e.target.value})}
+                      placeholder="Ex: +225 01 02 03 04 05" 
+                    />
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-4">
                   <div>
                     <Label htmlFor="location">Ville</Label>
-                    <Input id="location" value={userProfile.location || ''} placeholder="Ex: Abidjan" />
+                    <Input 
+                      id="location" 
+                      value={profileForm.location}
+                      onChange={(e) => setProfileForm({...profileForm, location: e.target.value})}
+                      placeholder="Ex: Abidjan" 
+                    />
                   </div>
-                  <div>
-                    <Label htmlFor="commune">Commune</Label>
-                    <Select value={userProfile.commune || ''}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Choisir une commune" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="cocody">Cocody</SelectItem>
-                        <SelectItem value="yopougon">Yopougon</SelectItem>
-                        <SelectItem value="adjame">Adjamé</SelectItem>
-                        <SelectItem value="plateau">Plateau</SelectItem>
-                        <SelectItem value="marcory">Marcory</SelectItem>
-                        <SelectItem value="koumassi">Koumassi</SelectItem>
-                        <SelectItem value="treichville">Treichville</SelectItem>
-                        <SelectItem value="port-bouet">Port-Bouët</SelectItem>
-                        <SelectItem value="abobo">Abobo</SelectItem>
-                        <SelectItem value="attécoubé">Attécoubé</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="quartier">Quartier</Label>
-                    <Input id="quartier" value={userProfile.quartier || ''} placeholder="Ex: Riviera" />
-                  </div>
+                  <LocationSelector
+                    selectedCommune={profileForm.commune}
+                    selectedQuartier={profileForm.quartier}
+                    onCommuneChange={(commune) => setProfileForm({...profileForm, commune})}
+                    onQuartierChange={(quartier) => setProfileForm({...profileForm, quartier})}
+                  />
                 </div>
                 <div>
                   <Label className="text-sm font-medium">Statut d'abonnement</Label>
@@ -339,6 +391,9 @@ const Dashboard = () => {
                     )}
                   </div>
                 </div>
+                <Button onClick={updateProfile} className="w-full mt-4">
+                  Sauvegarder les modifications
+                </Button>
               </CardContent>
             </Card>
           );
@@ -478,8 +533,158 @@ const Dashboard = () => {
               </Card>
             </div>
           );
+        case 'profile':
+          return (
+            <Card>
+              <CardHeader>
+                <CardTitle>Mon Profil Recruteur</CardTitle>
+                <CardDescription>
+                  Informations de votre compte recruteur QuickJob CI
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="first_name">Prénom</Label>
+                    <Input id="first_name" value={userProfile.first_name} readOnly />
+                  </div>
+                  <div>
+                    <Label htmlFor="last_name">Nom</Label>
+                    <Input id="last_name" value={userProfile.last_name} readOnly />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" value={userProfile.email} readOnly />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="phone">Téléphone</Label>
+                    <Input id="phone" value={userProfile.phone || ''} placeholder="Non renseigné" />
+                  </div>
+                  <div>
+                    <Label htmlFor="whatsapp">WhatsApp</Label>
+                    <Input id="whatsapp" value={userProfile.whatsapp || ''} placeholder="Non renseigné" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="location">Ville</Label>
+                    <Input id="location" value={userProfile.location || ''} placeholder="Ex: Abidjan" />
+                  </div>
+                  <div>
+                    <Label htmlFor="commune">Commune</Label>
+                    <Select value={userProfile.commune || ''}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Choisir une commune" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="cocody">Cocody</SelectItem>
+                        <SelectItem value="yopougon">Yopougon</SelectItem>
+                        <SelectItem value="adjame">Adjamé</SelectItem>
+                        <SelectItem value="plateau">Plateau</SelectItem>
+                        <SelectItem value="marcory">Marcory</SelectItem>
+                        <SelectItem value="koumassi">Koumassi</SelectItem>
+                        <SelectItem value="treichville">Treichville</SelectItem>
+                        <SelectItem value="port-bouet">Port-Bouët</SelectItem>
+                        <SelectItem value="abobo">Abobo</SelectItem>
+                        <SelectItem value="attécoubé">Attécoubé</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="quartier">Quartier</Label>
+                    <Input id="quartier" value={userProfile.quartier || ''} placeholder="Ex: Riviera" />
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Statut d'abonnement</Label>
+                  <div className="flex items-center space-x-2 mt-1">
+                    <Badge variant={subscription?.status === 'active' ? "default" : "secondary"}>
+                      {subscription?.status === 'active' ? "Premium" : "Gratuit"}
+                    </Badge>
+                    {subscription?.next_payment_date && (
+                      <span className="text-sm text-muted-foreground">
+                        Prochaine facturation: {new Date(subscription.next_payment_date).toLocaleDateString('fr-FR')}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        case 'subscription':
+          return (
+            <Card>
+              <CardHeader>
+                <CardTitle>Abonnement Premium Recruteur</CardTitle>
+                <CardDescription>
+                  Gérez votre abonnement pour publier vos offres d'emploi
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="p-4 border rounded-lg">
+                    <h4 className="font-medium mb-2">Plan Gratuit (Période d'essai)</h4>
+                    <ul className="text-sm text-muted-foreground space-y-1">
+                      <li>• 7 jours d'essai gratuit</li>
+                      <li>• Publication limitée</li>
+                      <li>• Support communautaire</li>
+                    </ul>
+                  </div>
+                  <div className="p-4 border-2 border-primary rounded-lg">
+                    <h4 className="font-medium mb-2 text-primary">Plan Premium - 15,000 CFA/mois</h4>
+                    <ul className="text-sm space-y-1">
+                      <li>• Publication illimitée d'offres</li>
+                      <li>• Accès à la base de candidats</li>
+                      <li>• Statistiques avancées</li>
+                      <li>• Support prioritaire</li>
+                    </ul>
+                    <Button 
+                      className="w-full mt-4" 
+                      onClick={handleSubscribe}
+                      disabled={subscription?.status === 'active'}
+                    >
+                      {subscription?.status === 'active' ? "Déjà abonné" : "S'abonner maintenant"}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
         default:
-          return <div>Contenu du recruteur en développement...</div>;
+          return (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium">Jobs publiés</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{jobs.length}</div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium">Jobs ouverts</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {jobs.filter(j => j.status === 'open').length}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium">Jobs fermés</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {jobs.filter(j => j.status === 'closed').length}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          );
       }
     }
 
@@ -495,9 +700,9 @@ const Dashboard = () => {
           <SidebarInset className="flex-1">
             <div className="flex items-center justify-between p-4 border-b">
               <div className="flex items-center space-x-4">
-                <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
+                <Button variant="ghost" size="sm" onClick={() => window.location.href = '/dashboard'}>
                   <ArrowLeft className="h-4 w-4 mr-1" />
-                  Accueil
+                  Dashboard
                 </Button>
                 <div>
                   <h1 className="text-2xl font-bold text-foreground">
