@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import JobCard from "@/components/JobCard";
 import LocationFilter from "@/components/LocationFilter";
@@ -8,70 +8,94 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Briefcase, TrendingUp, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
-// Mock data pour le MVP
-const mockJobs = [
-  {
-    id: 1,
-    title: "Aide pour déménagement urgent",
-    description: "Recherche 2 personnes pour aider au déménagement d'un appartement 2 pièces. Travail physique, bonne condition physique requise. Matériel fourni.",
-    amount: "25 000 FCFA",
-    location: "Cocody",
-    timePosted: "Il y a 2h",
-    rating: 4.8,
-    category: "Déménagement"
-  },
-  {
-    id: 2,
-    title: "Cours particuliers de mathématiques",
-    description: "Besoin d'un étudiant en maths pour donner des cours de soutien à mon fils en classe de 3ème. 2 séances par semaine, niveau collège.",
-    amount: "15 000 FCFA/mois",
-    location: "Yopougon",
-    timePosted: "Il y a 4h",
-    rating: 4.5,
-    category: "Soutien scolaire"
-  },
-  {
-    id: 3,
-    title: "Livraison de colis dans Abidjan",
-    description: "Recherche livreur avec moto pour distribuer des colis dans différents quartiers d'Abidjan. Planning flexible, paiement par livraison.",
-    amount: "1 500 FCFA/colis",
-    location: "Adjamé",
-    timePosted: "Il y a 6h",
-    rating: 4.2,
-    category: "Livraison"
-  },
-  {
-    id: 4,
-    title: "Mise en rayon supermarché",
-    description: "Supermarché recherche aide pour mise en rayon des produits alimentaires. Travail de nuit, bon salaire. Formation assurée sur place.",
-    amount: "20 000 FCFA",
-    location: "Marcory",
-    timePosted: "Il y a 1j",
-    category: "Mise en rayon"
-  },
-  {
-    id: 5,
-    title: "Nettoyage bureau - weekend",
-    description: "Entreprise recherche personne pour nettoyage bureau tous les weekends. Matériel de nettoyage fourni. Travail régulier.",
-    amount: "30 000 FCFA/mois",
-    location: "Plateau",
-    timePosted: "Il y a 1j",
-    category: "Ménage"
-  }
-];
+interface Job {
+  id: string;
+  title: string;
+  description: string;
+  amount: number;
+  currency: string;
+  location: string;
+  category: string | null;
+  created_at: string;
+}
 
 const Index = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [selectedLocation, setSelectedLocation] = useState("Tous");
   const [searchTerm, setSearchTerm] = useState("");
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    totalJobs: 0,
+    totalUsers: 0,
+    totalDistricts: 11
+  });
 
-  const filteredJobs = mockJobs.filter(job => {
+  useEffect(() => {
+    fetchRecentJobs();
+    fetchStats();
+  }, []);
+
+  const fetchRecentJobs = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('jobs')
+        .select('*')
+        .eq('status', 'open')
+        .order('created_at', { ascending: false })
+        .limit(15);
+
+      if (error) throw error;
+      setJobs(data || []);
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les offres d'emploi",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchStats = async () => {
+    try {
+      const [{ count: jobsCount }, { count: usersCount }] = await Promise.all([
+        supabase.from('jobs').select('*', { count: 'exact', head: true }),
+        supabase.from('users').select('*', { count: 'exact', head: true })
+      ]);
+
+      setStats({
+        totalJobs: jobsCount || 0,
+        totalUsers: usersCount || 0,
+        totalDistricts: 11
+      });
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
+  };
+
+  const formatJobForDisplay = (job: Job) => ({
+    id: job.id,
+    title: job.title,
+    description: job.description,
+    amount: `${job.amount.toLocaleString()} ${job.currency}`,
+    location: job.location,
+    timePosted: new Date(job.created_at).toLocaleDateString('fr-FR'),
+    category: job.category || 'Autre'
+  });
+
+  const filteredJobs = jobs.filter(job => {
     const matchesLocation = selectedLocation === "Tous" || job.location === selectedLocation;
     const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          job.description.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesLocation && matchesSearch;
-  });
+  }).map(formatJobForDisplay);
 
   const handlePublishClick = () => {
     navigate("/publish");
@@ -133,19 +157,19 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
-              <div className="text-2xl md:text-3xl font-bold text-primary">150+</div>
+              <div className="text-2xl md:text-3xl font-bold text-primary">{stats.totalJobs}+</div>
               <div className="text-sm text-muted-foreground">Jobs publiés</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl md:text-3xl font-bold text-primary">80+</div>
-              <div className="text-sm text-muted-foreground">Jeunes inscrits</div>
+              <div className="text-2xl md:text-3xl font-bold text-primary">{stats.totalUsers}+</div>
+              <div className="text-sm text-muted-foreground">Utilisateurs inscrits</div>
             </div>
             <div className="text-center">
               <div className="text-2xl md:text-3xl font-bold text-primary">95%</div>
               <div className="text-sm text-muted-foreground">Satisfaction</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl md:text-3xl font-bold text-primary">11</div>
+              <div className="text-2xl md:text-3xl font-bold text-primary">{stats.totalDistricts}</div>
               <div className="text-sm text-muted-foreground">Quartiers</div>
             </div>
           </div>
@@ -214,7 +238,14 @@ const Index = () => {
             </h2>
           </div>
 
-          {filteredJobs.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
+                <Briefcase className="h-8 w-8 text-muted-foreground animate-pulse" />
+              </div>
+              <p className="text-muted-foreground">Chargement des offres...</p>
+            </div>
+          ) : filteredJobs.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredJobs.map((job) => (
                 <JobCard key={job.id} {...job} />
@@ -226,10 +257,12 @@ const Index = () => {
                 <Search className="h-8 w-8 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-medium text-foreground mb-2">
-                Aucun job trouvé
+                {searchTerm || selectedLocation !== "Tous" ? "Aucun job trouvé" : "Aucune offre disponible"}
               </h3>
               <p className="text-muted-foreground mb-4">
-                Essayez de modifier vos filtres ou publier une nouvelle offre
+                {searchTerm || selectedLocation !== "Tous" 
+                  ? "Essayez de modifier vos filtres ou publier une nouvelle offre"
+                  : "Soyez le premier à publier une offre sur QuickJob CI"}
               </p>
               <Button onClick={handlePublishClick}>
                 Publier un job
