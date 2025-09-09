@@ -1,7 +1,1 @@
 project_id = "nzyeingkpsvyjoczsxpg"
-
-[functions.create-paystack-subscription]
-verify_jwt = true
-
-[functions.chatbot-rag]
-verify_jwt = false
