@@ -29,6 +29,10 @@ import AuthGuard from "@/components/AuthGuard";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import CandidateApplications from "@/components/CandidateApplications";
 import AvailableJobs from "@/components/AvailableJobs";
+import RecruiterApplications from "@/components/RecruiterApplications";
+import CandidateDatabase from "@/components/CandidateDatabase";
+import RecruiterStats from "@/components/RecruiterStats";
+import NotificationCenter from "@/components/NotificationCenter";
 import { LocationSelector } from "@/components/LocationSelector";
 
 interface UserProfile {
@@ -499,6 +503,129 @@ const Dashboard = () => {
                 </div>
               )}
             </div>
+          );
+        case 'applications':
+          return <RecruiterApplications userProfile={userProfile} />;
+        case 'candidates':
+        case 'all-candidates':
+        case 'search-cv':
+          return <CandidateDatabase userProfile={userProfile} />;
+        case 'stats':
+          return <RecruiterStats userProfile={userProfile} />;
+        case 'notifications':
+          return <NotificationCenter userProfile={userProfile} />;
+        case 'profile':
+          return (
+            <Card>
+              <CardHeader>
+                <CardTitle>Mon Profil Recruteur</CardTitle>
+                <CardDescription>
+                  Informations de votre compte recruteur QuickJob CI
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="first_name">Prénom</Label>
+                    <Input id="first_name" value={userProfile.first_name} readOnly />
+                  </div>
+                  <div>
+                    <Label htmlFor="last_name">Nom</Label>
+                    <Input id="last_name" value={userProfile.last_name} readOnly />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" value={userProfile.email} readOnly />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="phone">Téléphone</Label>
+                    <Input 
+                      id="phone" 
+                      value={profileForm.phone}
+                      onChange={(e) => setProfileForm({...profileForm, phone: e.target.value})}
+                      placeholder="Ex: +225 01 02 03 04 05" 
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="whatsapp">WhatsApp</Label>
+                    <Input 
+                      id="whatsapp" 
+                      value={profileForm.whatsapp}
+                      onChange={(e) => setProfileForm({...profileForm, whatsapp: e.target.value})}
+                      placeholder="Ex: +225 01 02 03 04 05" 
+                    />
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="location">Ville</Label>
+                    <Input 
+                      id="location" 
+                      value={profileForm.location}
+                      onChange={(e) => setProfileForm({...profileForm, location: e.target.value})}
+                      placeholder="Ex: Abidjan" 
+                    />
+                  </div>
+                  <LocationSelector
+                    selectedCommune={profileForm.commune}
+                    selectedQuartier={profileForm.quartier}
+                    onCommuneChange={(commune) => setProfileForm({...profileForm, commune})}
+                    onQuartierChange={(quartier) => setProfileForm({...profileForm, quartier})}
+                  />
+                </div>
+                <Button onClick={updateProfile} className="w-full mt-4">
+                  Sauvegarder les modifications
+                </Button>
+              </CardContent>
+            </Card>
+          );
+        case 'subscription':
+          return (
+            <Card>
+              <CardHeader>
+                <CardTitle>Abonnement Recruteur</CardTitle>
+                <CardDescription>
+                  Gérez votre abonnement pour publier des offres d'emploi
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="p-4 border rounded-lg">
+                    <h4 className="font-medium mb-2">Plan Gratuit</h4>
+                    <ul className="text-sm text-muted-foreground space-y-1">
+                      <li>• 3 offres d'emploi maximum</li>
+                      <li>• Candidatures limitées</li>
+                      <li>• Support communautaire</li>
+                    </ul>
+                  </div>
+                  <div className="p-4 border-2 border-primary rounded-lg">
+                    <h4 className="font-medium mb-2 text-primary">Plan Premium - 25,000 CFA/mois</h4>
+                    <ul className="text-sm space-y-1">
+                      <li>• Offres d'emploi illimitées</li>
+                      <li>• Accès à la base de candidats</li>
+                      <li>• Statistiques avancées</li>
+                      <li>• Support prioritaire</li>
+                      <li>• Gestion des favoris candidats</li>
+                    </ul>
+                    <Button className="w-full mt-4" onClick={handleSubscribe} disabled={subscription?.status === 'active'}>
+                      {subscription?.status === 'active' ? "Abonné" : "Souscrire maintenant"}
+                    </Button>
+                  </div>
+                  {subscription && (
+                    <div className="p-4 bg-muted rounded-lg">
+                      <p className="text-sm font-medium">Statut actuel: {getStatusBadge(subscription.status)}</p>
+                      {subscription.next_payment_date && (
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Prochain paiement: {new Date(subscription.next_payment_date).toLocaleDateString('fr-FR')}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           );
         case 'stats':
           return (

@@ -77,6 +77,11 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
       ]
     },
     {
+      title: "Notifications",
+      url: "/dashboard?tab=notifications",
+      icon: Settings,
+    },
+    {
       title: "Mon profil",
       url: "/dashboard?tab=profile",
       icon: User,
