@@ -47,6 +47,7 @@ export type Database = {
           id: string
           job_id: string | null
           status: string | null
+          status_updated_at: string | null
           student_id: string | null
         }
         Insert: {
@@ -54,6 +55,7 @@ export type Database = {
           id?: string
           job_id?: string | null
           status?: string | null
+          status_updated_at?: string | null
           student_id?: string | null
         }
         Update: {
@@ -61,6 +63,7 @@ export type Database = {
           id?: string
           job_id?: string | null
           status?: string | null
+          status_updated_at?: string | null
           student_id?: string | null
         }
         Relationships: [
@@ -103,6 +106,68 @@ export type Database = {
           {
             foreignKeyName: "candidate_favorites_recruiter_id_fkey"
             columns: ["recruiter_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      candidate_posts: {
+        Row: {
+          availability: string | null
+          candidate_id: string
+          commune: string | null
+          created_at: string
+          currency: string | null
+          description: string
+          hourly_rate: number | null
+          id: string
+          location: string | null
+          quartier: string | null
+          skills: string[] | null
+          status: string | null
+          title: string
+          updated_at: string
+          views_count: number | null
+        }
+        Insert: {
+          availability?: string | null
+          candidate_id: string
+          commune?: string | null
+          created_at?: string
+          currency?: string | null
+          description: string
+          hourly_rate?: number | null
+          id?: string
+          location?: string | null
+          quartier?: string | null
+          skills?: string[] | null
+          status?: string | null
+          title: string
+          updated_at?: string
+          views_count?: number | null
+        }
+        Update: {
+          availability?: string | null
+          candidate_id?: string
+          commune?: string | null
+          created_at?: string
+          currency?: string | null
+          description?: string
+          hourly_rate?: number | null
+          id?: string
+          location?: string | null
+          quartier?: string | null
+          skills?: string[] | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+          views_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_candidate_posts_candidate_id"
+            columns: ["candidate_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -428,7 +493,9 @@ export type Database = {
       }
       users: {
         Row: {
+          applications_created_count: number | null
           availability: string | null
+          commune: string | null
           created_at: string
           cv_url: string | null
           email: string
@@ -436,19 +503,24 @@ export type Database = {
           first_name: string | null
           id: string
           is_verified: boolean | null
+          is_vip_candidate: boolean | null
           last_name: string | null
           location: string | null
           phone: string | null
           profile_complete: boolean | null
+          quartier: string | null
           role: Database["public"]["Enums"]["user_role"]
           skills: string[] | null
           tenant_id: string | null
           updated_at: string
           user_id: string
+          vip_expiry_date: string | null
           whatsapp: string | null
         }
         Insert: {
+          applications_created_count?: number | null
           availability?: string | null
+          commune?: string | null
           created_at?: string
           cv_url?: string | null
           email: string
@@ -456,19 +528,24 @@ export type Database = {
           first_name?: string | null
           id?: string
           is_verified?: boolean | null
+          is_vip_candidate?: boolean | null
           last_name?: string | null
           location?: string | null
           phone?: string | null
           profile_complete?: boolean | null
+          quartier?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           skills?: string[] | null
           tenant_id?: string | null
           updated_at?: string
           user_id: string
+          vip_expiry_date?: string | null
           whatsapp?: string | null
         }
         Update: {
+          applications_created_count?: number | null
           availability?: string | null
+          commune?: string | null
           created_at?: string
           cv_url?: string | null
           email?: string
@@ -476,15 +553,18 @@ export type Database = {
           first_name?: string | null
           id?: string
           is_verified?: boolean | null
+          is_vip_candidate?: boolean | null
           last_name?: string | null
           location?: string | null
           phone?: string | null
           profile_complete?: boolean | null
+          quartier?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           skills?: string[] | null
           tenant_id?: string | null
           updated_at?: string
           user_id?: string
+          vip_expiry_date?: string | null
           whatsapp?: string | null
         }
         Relationships: [
@@ -509,7 +589,7 @@ export type Database = {
     }
     Enums: {
       application_status: "pending" | "accepted" | "rejected"
-      job_status: "open" | "closed" | "in_progress"
+      job_status: "open" | "closed" | "in_progress" | "accomplished"
       subscription_status:
         | "active"
         | "inactive"
@@ -645,7 +725,7 @@ export const Constants = {
   public: {
     Enums: {
       application_status: ["pending", "accepted", "rejected"],
-      job_status: ["open", "closed", "in_progress"],
+      job_status: ["open", "closed", "in_progress", "accomplished"],
       subscription_status: [
         "active",
         "inactive",
