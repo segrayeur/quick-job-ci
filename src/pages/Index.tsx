@@ -10,7 +10,6 @@ import { Search, Briefcase, TrendingUp, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-
 interface Job {
   id: string;
   title: string;
@@ -21,10 +20,11 @@ interface Job {
   category: string | null;
   created_at: string;
 }
-
 const Index = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [selectedLocation, setSelectedLocation] = useState("Tous");
   const [searchTerm, setSearchTerm] = useState("");
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -34,21 +34,18 @@ const Index = () => {
     totalUsers: 0,
     totalDistricts: 11
   });
-
   useEffect(() => {
     fetchRecentJobs();
     fetchStats();
   }, []);
-
   const fetchRecentJobs = async () => {
     try {
-      const { data, error } = await supabase
-        .from('jobs')
-        .select('*')
-        .eq('status', 'open')
-        .order('created_at', { ascending: false })
-        .limit(15);
-
+      const {
+        data,
+        error
+      } = await supabase.from('jobs').select('*').eq('status', 'open').order('created_at', {
+        ascending: false
+      }).limit(15);
       if (error) throw error;
       setJobs(data || []);
     } catch (error) {
@@ -62,14 +59,19 @@ const Index = () => {
       setLoading(false);
     }
   };
-
   const fetchStats = async () => {
     try {
-      const [{ count: jobsCount }, { count: usersCount }] = await Promise.all([
-        supabase.from('jobs').select('*', { count: 'exact', head: true }),
-        supabase.from('users').select('*', { count: 'exact', head: true })
-      ]);
-
+      const [{
+        count: jobsCount
+      }, {
+        count: usersCount
+      }] = await Promise.all([supabase.from('jobs').select('*', {
+        count: 'exact',
+        head: true
+      }), supabase.from('users').select('*', {
+        count: 'exact',
+        head: true
+      })]);
       setStats({
         totalJobs: jobsCount || 0,
         totalUsers: usersCount || 0,
@@ -79,7 +81,6 @@ const Index = () => {
       console.error('Error fetching stats:', error);
     }
   };
-
   const formatJobForDisplay = (job: Job) => ({
     id: job.id,
     title: job.title,
@@ -89,55 +90,36 @@ const Index = () => {
     timePosted: new Date(job.created_at).toLocaleDateString('fr-FR'),
     category: job.category || 'Autre'
   });
-
   const filteredJobs = jobs.filter(job => {
     const matchesLocation = selectedLocation === "Tous" || job.location === selectedLocation;
-    const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         job.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) || job.description.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesLocation && matchesSearch;
   }).map(formatJobForDisplay);
-
   const handlePublishClick = () => {
     navigate("/publish");
   };
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Header />
       
       {/* Hero Section */}
-      <section className="bg-gradient-hero text-white py-12 md:py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-3xl md:text-5xl font-bold mb-4">
+      <section className="bg-gradient-hero text-white py-12 md:py-16 bg-orange-500">
+        <div className="container mx-auto px-4 text-center bg-orange-500">
+          <h1 className="text-3xl md:text-5xl font-bold mb-4 text-green-900">
             Trouvez un job en Côte d'Ivoire
           </h1>
           <p className="text-lg md:text-xl mb-8 opacity-90">
             La plateforme qui connecte les jeunes aux opportunités de petits boulots
           </p>
           <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <Button 
-              size="lg" 
-              className="flex-1 bg-white text-primary hover:bg-white/90 transition-colors"
-              onClick={() => navigate("/trouver-un-job")}
-            >
+            <Button size="lg" className="flex-1 bg-white text-primary hover:bg-white/90 transition-colors" onClick={() => navigate("/trouver-un-job")}>
               <Briefcase className="mr-2 h-5 w-5" />
               Trouver un job
             </Button>
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="flex-1 border-white text-white hover:bg-white hover:text-primary transition-colors"
-              onClick={() => navigate("/trouver-un-candidat")}
-            >
+            <Button size="lg" variant="outline" onClick={() => navigate("/trouver-un-candidat")} className="flex-1 border-white transition-colors text-slate-50 bg-zinc-950 hover:bg-zinc-800">
               <Users className="mr-2 h-5 w-5" />
               Trouver un candidat
             </Button>
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="flex-1 border-white text-white hover:bg-white hover:text-primary transition-colors"
-              onClick={handlePublishClick}
-            >
+            <Button size="lg" variant="outline" onClick={handlePublishClick} className="flex-1 border-white text-white hover:text-primary transition-colors bg-green-950 hover:bg-green-800">
               <TrendingUp className="mr-2 h-5 w-5" />
               Publier un job
             </Button>
@@ -148,12 +130,7 @@ const Index = () => {
             <p className="text-white/80 mb-4">
               Nouveau sur QuickJob CI ?
             </p>
-            <Button 
-              size="lg" 
-              variant="secondary"
-              onClick={() => navigate("/inscription")}
-              className="bg-white/10 text-white border border-white/20 hover:bg-white/20"
-            >
+            <Button size="lg" variant="secondary" onClick={() => navigate("/inscription")} className="bg-white/10 text-white border border-white/20 hover:bg-white/20">
               <Users className="mr-2 h-5 w-5" />
               Créer un compte gratuit
             </Button>
@@ -189,35 +166,19 @@ const Index = () => {
       <section className="py-6 bg-accent/20 border-b">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              className="bg-gradient-primary hover:opacity-90 transition-opacity"
-              onClick={() => navigate("/trouver-un-job")}
-            >
+            <Button size="lg" className="bg-gradient-primary hover:opacity-90 transition-opacity" onClick={() => navigate("/trouver-un-job")}>
               <Search className="mr-2 h-5 w-5" />
               Rechercher un emploi
             </Button>
-            <Button 
-              size="lg" 
-              className="bg-gradient-primary hover:opacity-90 transition-opacity"
-              onClick={() => navigate("/trouver-un-candidat")}
-            >
+            <Button size="lg" className="bg-gradient-primary hover:opacity-90 transition-opacity" onClick={() => navigate("/trouver-un-candidat")}>
               <Users className="mr-2 h-5 w-5" />
               Trouver un candidat
             </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              onClick={() => navigate("/inscription")}
-            >
+            <Button size="lg" variant="outline" onClick={() => navigate("/inscription")}>
               <Users className="mr-2 h-5 w-5" />
               Créer mon compte
             </Button>
-            <Button 
-              size="lg" 
-              variant="secondary"
-              onClick={handlePublishClick}
-            >
+            <Button size="lg" variant="secondary" onClick={handlePublishClick}>
               <Briefcase className="mr-2 h-5 w-5" />
               Publier une offre
             </Button>
@@ -230,20 +191,12 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="relative max-w-md mx-auto">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Rechercher un job..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+            <Input placeholder="Rechercher un job..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10" />
           </div>
         </div>
       </section>
 
-      <LocationFilter 
-        selectedLocation={selectedLocation}
-        onLocationChange={setSelectedLocation}
-      />
+      <LocationFilter selectedLocation={selectedLocation} onLocationChange={setSelectedLocation} />
 
       {/* Jobs List */}
       <main className="py-8">
@@ -255,37 +208,30 @@ const Index = () => {
             </h2>
           </div>
 
-          {loading ? (
-            <div className="text-center py-12">
+          {loading ? <div className="text-center py-12">
               <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
                 <Briefcase className="h-8 w-8 text-muted-foreground animate-pulse" />
               </div>
               <p className="text-muted-foreground">Chargement des offres...</p>
-            </div>
-          ) : filteredJobs.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredJobs.map((job) => (
-                <JobCard 
-                  key={job.id} 
-                  {...job}
-                  onViewMore={async () => {
-                    const { data: { session } } = await supabase.auth.getSession();
-                    if (!session) {
-                      toast({
-                        title: "Connexion requise",
-                        description: "Vous devez être connecté pour voir les détails complets du job",
-                        variant: "destructive"
-                      });
-                      navigate("/connexion");
-                      return;
-                    }
-                    navigate(`/dashboard?view=job&id=${job.id}`);
-                  }}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
+            </div> : filteredJobs.length > 0 ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredJobs.map(job => <JobCard key={job.id} {...job} onViewMore={async () => {
+            const {
+              data: {
+                session
+              }
+            } = await supabase.auth.getSession();
+            if (!session) {
+              toast({
+                title: "Connexion requise",
+                description: "Vous devez être connecté pour voir les détails complets du job",
+                variant: "destructive"
+              });
+              navigate("/connexion");
+              return;
+            }
+            navigate(`/dashboard?view=job&id=${job.id}`);
+          }} />)}
+            </div> : <div className="text-center py-12">
               <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="h-8 w-8 text-muted-foreground" />
               </div>
@@ -293,15 +239,12 @@ const Index = () => {
                 {searchTerm || selectedLocation !== "Tous" ? "Aucun job trouvé" : "Aucune offre disponible"}
               </h3>
               <p className="text-muted-foreground mb-4">
-                {searchTerm || selectedLocation !== "Tous" 
-                  ? "Essayez de modifier vos filtres ou publier une nouvelle offre"
-                  : "Soyez le premier à publier une offre sur QuickJob CI"}
+                {searchTerm || selectedLocation !== "Tous" ? "Essayez de modifier vos filtres ou publier une nouvelle offre" : "Soyez le premier à publier une offre sur QuickJob CI"}
               </p>
               <Button onClick={handlePublishClick}>
                 Publier un job
               </Button>
-            </div>
-          )}
+            </div>}
         </div>
       </main>
 
@@ -315,11 +258,7 @@ const Index = () => {
             <p className="text-muted-foreground mb-6">
               Publiez votre offre gratuitement et trouvez des candidats motivés en quelques minutes
             </p>
-            <Button 
-              size="lg" 
-              className="bg-gradient-primary hover:opacity-90 transition-opacity"
-              onClick={handlePublishClick}
-            >
+            <Button size="lg" className="bg-gradient-primary hover:opacity-90 transition-opacity" onClick={handlePublishClick}>
               <Users className="mr-2 h-5 w-5" />
               Commencer maintenant
             </Button>
@@ -329,8 +268,6 @@ const Index = () => {
       
       <FloatingBubbles />
       <ChatBot />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
