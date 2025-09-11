@@ -9,7 +9,6 @@ const AuthEnforcer = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-
     const redirectToRole = async (userId: string) => {
       const { data: profile } = await supabase
         .from('users')
@@ -66,7 +65,7 @@ const AuthEnforcer = () => {
     });
 
     return () => subscription.unsubscribe();
-  }, [location.pathname, navigate]);
+  }, [location.pathname, navigate, toast]);
 
   return null;
 };
