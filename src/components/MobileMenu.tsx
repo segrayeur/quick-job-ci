@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, X, MapPin, Plus, User, LogIn, Briefcase, Home, Phone, Info, Users, HelpCircle } from "lucide-react";
+import { Menu, X, MapPin, User, LogIn, Briefcase, Home, Phone, Info, Users, HelpCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { User as SupabaseUser } from "@supabase/supabase-js";
@@ -19,14 +19,6 @@ const MobileMenu = ({ user }: MobileMenuProps) => {
     setOpen(false);
   };
 
-  const handlePublishClick = () => {
-    if (user) {
-      navigate("/publish");
-    } else {
-      navigate("/connexion");
-    }
-    setOpen(false);
-  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -113,16 +105,6 @@ const MobileMenu = ({ user }: MobileMenuProps) => {
               {item.label}
             </Button>
           ))}
-          
-          {/* Publier button with conditional logic */}
-          <Button
-            variant="ghost"
-            className="w-full justify-start h-12"
-            onClick={handlePublishClick}
-          >
-            <Plus className="h-5 w-5 mr-3" />
-            Publier un job
-          </Button>
         </div>
 
         {user && (

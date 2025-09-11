@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { MapPin, Plus, User, LogIn, LogOut } from "lucide-react";
+import { MapPin, User, LogIn } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser, Session } from "@supabase/supabase-js";
@@ -27,13 +27,6 @@ const Header = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handlePublishClick = () => {
-    if (user) {
-      navigate("/publish");
-    } else {
-      navigate("/connexion");
-    }
-  };
 
   const handleLogoClick = () => {
     navigate("/");
@@ -96,10 +89,6 @@ const Header = () => {
             >
               <MapPin className="h-4 w-4 mr-1" />
               Trouver un job
-            </Button>
-            <Button variant="default" size="sm" onClick={handlePublishClick} className="hidden sm:flex">
-              <Plus className="h-4 w-4 mr-1" />
-              Publier
             </Button>
             {!user && (
               <Button 
