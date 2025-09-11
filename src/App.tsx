@@ -7,6 +7,9 @@ import Index from "./pages/Index";
 import PublishJob from "./pages/PublishJob";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import DashboardRecruteur from "./pages/DashboardRecruteur";
+import DashboardCandidat from "./pages/DashboardCandidat";
+import AccesNonAutorise from "./pages/AccesNonAutorise";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Pricing from "./pages/Pricing";
@@ -39,6 +42,10 @@ const App = () => (
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/recruteur" element={<DashboardRecruteur />} />
+          <Route path="/dashboard/candidat" element={<DashboardCandidat />} />
+          <Route path="/dashboard/admin" element={<Dashboard />} />
+          <Route path="/acces-non-autorise" element={<AccesNonAutorise />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

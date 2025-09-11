@@ -37,14 +37,47 @@ const Connexion = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      navigate("/dashboard");
-    }
-  }, [user, navigate]);
-
   const handleInputChange = (field: string, value: string) => {
     setSignInData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const redirectBasedOnRole = async (userId: string) => {
+    try {
+      const { data: userProfile, error } = await supabase
+        .from('users')
+        .select('role')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user role:', error);
+        navigate("/acces-non-autorise");
+        return;
+      }
+
+      if (!userProfile || !userProfile.role) {
+        navigate("/acces-non-autorise");
+        return;
+      }
+
+      // Redirection basée sur le rôle
+      switch (userProfile.role) {
+        case 'recruiter':
+          navigate("/dashboard/recruteur");
+          break;
+        case 'candidate':
+          navigate("/dashboard/candidat");
+          break;
+        case 'admin':
+          navigate("/dashboard/admin");
+          break;
+        default:
+          navigate("/acces-non-autorise");
+      }
+    } catch (error) {
+      console.error('Error during role-based redirect:', error);
+      navigate("/acces-non-autorise");
+    }
   };
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -67,51 +100,30 @@ const Connexion = () => {
       });
 
       if (error) {
-        if (error.message.includes('Invalid login credentials')) {
-          // Vérifier si l'utilisateur existe dans notre base de données
-          const { data: userExists } = await supabase
-            .from('users')
-            .select('email')
-            .eq('email', signInData.email)
-            .single();
-
-          if (!userExists) {
-            toast({
-              variant: "destructive",
-              title: "Compte inexistant",
-              description: "Aucun compte n'est associé à cette adresse email. Veuillez créer un compte d'abord.",
-            });
-          } else {
-            toast({
-              variant: "destructive",
-              title: "Mot de passe incorrect",
-              description: "Le mot de passe que vous avez saisi est incorrect.",
-            });
-          }
-        } else if (error.message.includes('Email not confirmed')) {
-          toast({
-            variant: "destructive",
-            title: "Email non confirmé",
-            description: "Veuillez confirmer votre email avant de vous connecter.",
-          });
-        } else {
-          throw error;
-        }
+        // Message d'erreur unifié comme demandé
+        toast({
+          variant: "destructive",
+          title: "Erreur de connexion",
+          description: "Adresse email ou mot de passe incorrect.",
+        });
         return;
       }
 
-      toast({
-        title: "Connexion réussie !",
-        description: "Bienvenue sur QuickJob CI",
-      });
-      
-      navigate("/dashboard");
+      if (data.user) {
+        toast({
+          title: "Connexion réussie !",
+          description: "Connexion en cours...",
+        });
+        
+        // Redirection basée sur le rôle
+        await redirectBasedOnRole(data.user.id);
+      }
     } catch (error: any) {
       console.error('Signin error:', error);
       toast({
         variant: "destructive",
         title: "Erreur de connexion",
-        description: error.message || "Une erreur est survenue",
+        description: "Une erreur est survenue lors de la connexion.",
       });
     } finally {
       setLoading(false);
