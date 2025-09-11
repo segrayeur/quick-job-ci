@@ -8,7 +8,8 @@ import {
   Search,
   TrendingUp,
   Star,
-  Settings
+  Settings,
+  Bell
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
@@ -35,14 +36,9 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
 
   const candidateItems = [
     {
-      title: "Candidatures & Offres",
-      url: "/dashboard",
+      title: "Mes candidatures",
+      url: "/dashboard?tab=applications",
       icon: Briefcase,
-      subItems: [
-        { title: "Mes candidatures", url: "/dashboard?tab=applications" },
-        { title: "Offres acceptées", url: "/dashboard?tab=accepted" },
-        { title: "Offres disponibles", url: "/dashboard?tab=available" }
-      ]
     },
     {
       title: "Mon profil",
@@ -50,46 +46,42 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
       icon: User,
     },
     {
-      title: "Abonnement & Paiement",
-      url: "/dashboard?tab=subscription",
-      icon: CreditCard,
+      title: "Notifications",
+      url: "/dashboard?tab=notifications",
+      icon: Bell,
     }
   ];
 
   const recruiterItems = [
     {
-      title: "Jobs & Annonces publiés",
-      url: "/dashboard",
+      title: "Tableau de bord",
+      url: "/dashboard?tab=profile",
       icon: Briefcase,
-      subItems: [
-        { title: "Mes jobs publiés", url: "/dashboard?tab=jobs" },
-        { title: "Candidatures reçues", url: "/dashboard?tab=applications" },
-        { title: "Statistiques", url: "/dashboard?tab=stats" }
-      ]
     },
     {
-      title: "Base des candidats",
-      url: "/dashboard?tab=candidates",
+      title: "Mes offres d'emploi",
+      url: "/dashboard?tab=jobs",
+      icon: Briefcase,
+    },
+    {
+      title: "Candidatures reçues",
+      url: "/dashboard?tab=applications",
       icon: Users,
-      subItems: [
-        { title: "Voir tous les profils", url: "/dashboard?tab=all-candidates" },
-        { title: "Recherche CV", url: "/dashboard?tab=search-cv" }
-      ]
+    },
+    {
+      title: "Statistiques",
+      url: "/dashboard?tab=stats",
+      icon: TrendingUp,
+    },
+    {
+      title: "Abonnements",
+      url: "/dashboard?tab=subscription",
+      icon: CreditCard,
     },
     {
       title: "Notifications",
       url: "/dashboard?tab=notifications",
       icon: Settings,
-    },
-    {
-      title: "Mon profil",
-      url: "/dashboard?tab=profile",
-      icon: User,
-    },
-    {
-      title: "Abonnement & Paiement",
-      url: "/dashboard?tab=subscription",
-      icon: CreditCard,
     }
   ];
 
@@ -132,21 +124,6 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
                       {state === "expanded" && <span>{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
-                  
-                  {/* Sub-items pour les éléments expandables */}
-                  {item.subItems && state === "expanded" && (
-                    <div className="ml-6 mt-2 space-y-1">
-                      {item.subItems.map((subItem) => (
-                        <NavLink
-                          key={subItem.title}
-                          to={subItem.url}
-                          className={`block p-2 text-sm rounded-md transition-colors ${getNavClass(isActive(subItem.url))}`}
-                        >
-                          {subItem.title}
-                        </NavLink>
-                      ))}
-                    </div>
-                  )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>

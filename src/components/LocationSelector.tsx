@@ -78,7 +78,6 @@ export const LocationSelector = ({
             <SelectValue placeholder="Choisir une commune" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sélectionner...</SelectItem>
             {Object.keys(communesWithQuartiers).map((commune) => (
               <SelectItem key={commune} value={commune}>
                 {commune.charAt(0).toUpperCase() + commune.slice(1)}
@@ -99,7 +98,6 @@ export const LocationSelector = ({
             <SelectValue placeholder={selectedCommune ? "Choisir un quartier" : "D'abord choisir commune"} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sélectionner...</SelectItem>
             {availableQuartiers.map((quartier) => (
               <SelectItem key={quartier} value={quartier}>
                 {quartier}
