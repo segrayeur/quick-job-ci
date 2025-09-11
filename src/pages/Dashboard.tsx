@@ -41,6 +41,7 @@ interface UserProfile {
 }
 
 const Dashboard = () => {
+  // Dashboard principal de l'application
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
