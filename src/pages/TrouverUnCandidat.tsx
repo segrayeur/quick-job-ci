@@ -121,7 +121,7 @@ const TrouverUnCandidat = () => {
       <section className="bg-gradient-hero text-white py-8 bg-green-600">
         <div className="container mx-auto px-4">
           <div className="mb-6">
-            <Button variant="ghost" onClick={() => navigate("/")} className="text-white hover:bg-white/10">
+            <Button variant="ghost" onClick={() => navigate("/")} className="text-white bg-zinc-950 hover:bg-zinc-800">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Retour à l'accueil
             </Button>
