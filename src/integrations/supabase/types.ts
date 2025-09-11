@@ -604,7 +604,7 @@ export type Database = {
     }
     Functions: {
       get_user_internal_id: {
-        Args: { user_uuid?: string }
+        Args: Record<PropertyKey, never> | { user_uuid?: string }
         Returns: string
       }
       get_user_role: {
@@ -616,11 +616,11 @@ export type Database = {
         Returns: string
       }
       is_job_owner: {
-        Args: { job_id: string; user_uuid?: string }
+        Args: { job_id: string } | { job_id: string; user_uuid?: string }
         Returns: boolean
       }
       is_recruiter: {
-        Args: { user_uuid?: string }
+        Args: Record<PropertyKey, never> | { user_uuid?: string }
         Returns: boolean
       }
       send_notification: {
