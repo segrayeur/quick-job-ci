@@ -632,6 +632,15 @@ export type Database = {
         }
         Returns: undefined
       }
+      validate_security_setup: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          function_name: string
+          has_search_path: boolean
+          is_security_definer: boolean
+          security_status: string
+        }[]
+      }
     }
     Enums: {
       application_status: "pending" | "accepted" | "rejected"
