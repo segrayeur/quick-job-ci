@@ -25,7 +25,7 @@ const Inscription = () => {
     lastName: "",
     phone: "",
     location: "",
-    role: "candidate" as "candidate" | "recruiter"
+    role: "" as "candidate" | "recruiter" | ""
   });
 
   useEffect(() => {
@@ -167,7 +167,11 @@ const Inscription = () => {
             navigate("/dashboard/candidat");
             break;
           default:
-            navigate("/acces-non-autorise");
+            toast({
+              variant: "destructive",
+              title: "Erreur",
+              description: "Votre rôle n'est pas défini. Contactez l'administrateur.",
+            });
         }
       }
     } catch (error: any) {
@@ -215,29 +219,26 @@ const Inscription = () => {
             <form onSubmit={handleSignUp} className="space-y-4">
               {/* Type de compte */}
               <div className="space-y-2">
-                <Label htmlFor="role">Je suis un(e)</Label>
-                <Select 
-                  value={signUpData.role} 
-                  onValueChange={(value: "candidate" | "recruiter") => handleInputChange("role", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="candidate">
-                      <div className="flex items-center">
-                        <User className="h-4 w-4 mr-2" />
-                        Candidat
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="recruiter">
-                      <div className="flex items-center">
-                        <Briefcase className="h-4 w-4 mr-2" />
-                        Recruteur
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex gap-3" role="group" aria-label="Choix du rôle">
+                  <Button
+                    type="button"
+                    variant={signUpData.role === "candidate" ? "default" : "outline"}
+                    onClick={() => handleInputChange("role", "candidate")}
+                    className="flex-1"
+                    aria-pressed={signUpData.role === "candidate"}
+                  >
+                    <User className="h-4 w-4 mr-2" /> Candidat
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={signUpData.role === "recruiter" ? "default" : "outline"}
+                    onClick={() => handleInputChange("role", "recruiter")}
+                    className="flex-1"
+                    aria-pressed={signUpData.role === "recruiter"}
+                  >
+                    <Briefcase className="h-4 w-4 mr-2" /> Recruteur
+                  </Button>
+                </div>
               </div>
 
               {/* Informations personnelles */}

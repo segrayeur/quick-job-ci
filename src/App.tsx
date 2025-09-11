@@ -28,6 +28,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <AuthEnforcer />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/inscription" element={<Inscription />} />
           <Route path="/connexion" element={<Connexion />} />
+          <Route path="/login" element={<Connexion />} />
           <Route path="/trouver-un-job" element={<TrouverUnJob />} />
           <Route path="/trouver-un-candidat" element={<TrouverUnCandidat />} />
           <Route path="/faq" element={<FAQ />} />
