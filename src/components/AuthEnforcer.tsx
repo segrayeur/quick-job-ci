@@ -12,8 +12,8 @@ const AuthEnforcer = () => {
       const path = location.pathname;
 
       if (session?.user) {
-        // Utilisateur connecté: forcer l'accès au dashboard uniquement
-        if (path !== "/dashboard") {
+        // Utilisateur connecté: permettre l'accès aux pages publiques mais rediriger depuis l'accueil
+        if (path === "/" || path === "/connexion" || path === "/inscription") {
           navigate("/dashboard", { replace: true });
         }
       } else {
@@ -27,7 +27,7 @@ const AuthEnforcer = () => {
     enforce();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.user) {
+      if (session?.user && (location.pathname === "/" || location.pathname === "/connexion" || location.pathname === "/inscription")) {
         navigate("/dashboard", { replace: true });
       } else if (event === "SIGNED_OUT") {
         navigate("/", { replace: true });
