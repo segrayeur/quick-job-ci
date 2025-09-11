@@ -12,11 +12,9 @@ interface JobCardProps {
   rating?: number;
   category?: string;
   jobId?: string;
-  showContactInfo?: boolean;
-  contactPhone?: string;
-  contactWhatsapp?: string;
   onApply?: () => void;
   onViewMore?: () => void;
+  // Contact info is now handled securely and not passed as props
 }
 
 const JobCard = ({ 
@@ -27,9 +25,6 @@ const JobCard = ({
   timePosted, 
   rating, 
   category, 
-  showContactInfo = false,
-  contactPhone,
-  contactWhatsapp,
   onApply,
   onViewMore
 }: JobCardProps) => {
@@ -65,29 +60,12 @@ const JobCard = ({
         )}
       </CardContent>
       
-      <CardFooter className="pt-0 space-y-2">
-        {showContactInfo && (contactPhone || contactWhatsapp) && (
-          <div className="w-full space-y-2 mb-2">
-            <p className="text-sm font-medium text-foreground">Contact du recruteur :</p>
-            {contactPhone && (
-              <div className="flex items-center text-sm text-muted-foreground">
-                <span className="font-medium">Téléphone: </span>
-                <span className="ml-1">{contactPhone}</span>
-              </div>
-            )}
-            {contactWhatsapp && (
-              <div className="flex items-center text-sm text-muted-foreground">
-                <span className="font-medium">WhatsApp: </span>
-                <span className="ml-1">{contactWhatsapp}</span>
-              </div>
-            )}
-          </div>
-        )}
+      <CardFooter className="pt-0">
         <Button 
           className="w-full bg-gradient-primary hover:opacity-90 transition-opacity"
           onClick={onViewMore || onApply}
         >
-          {onViewMore ? "Voir plus d'informations" : (showContactInfo ? "Contacter le recruteur" : "Postuler maintenant")}
+          {onViewMore ? "Voir plus d'informations" : "Postuler maintenant"}
         </Button>
       </CardFooter>
     </Card>

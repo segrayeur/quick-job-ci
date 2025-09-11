@@ -73,12 +73,8 @@ const AvailableJobs = ({ userProfile }: AvailableJobsProps) => {
 
   const fetchJobs = async () => {
     try {
-      const { data, error } = await supabase
-        .from('jobs')
-        .select('*')
-        .eq('status', 'open')
-        .order('created_at', { ascending: false });
-
+      // Use secure function to get jobs without contact information
+      const { data, error } = await supabase.rpc('get_jobs_public');
       if (error) throw error;
       setJobs(data || []);
     } catch (error) {
