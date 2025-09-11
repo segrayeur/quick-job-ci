@@ -40,7 +40,7 @@ const FloatingBubbles = () => {
       id: 'whatsapp',
       icon: MessageSquare,
       label: "WhatsApp Support",
-      color: "bg-green-500 hover:bg-green-600",
+      color: "bg-green-500 hover:bg-green-600 shadow-glow",
       action: () => {
         logInteraction('whatsapp', { bubbleId: 'whatsapp', label: 'WhatsApp Support' });
         const message = encodeURIComponent("Salut ! Je suis intéressé par QuickJob CI 👋");
@@ -51,7 +51,7 @@ const FloatingBubbles = () => {
       id: 'openai',
       icon: Brain,
       label: "Assistant IA OpenAI",
-      color: "bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600",
+      color: "bg-orange-500 hover:bg-orange-600 shadow-neon",
       action: () => {
         logInteraction('openai_assistant', { bubbleId: 'openai', label: 'Assistant IA OpenAI' });
         setIsOpenAIOpen(true);
@@ -85,8 +85,8 @@ const FloatingBubbles = () => {
                   size="icon"
                   className={cn(
                     "h-12 w-12 rounded-full shadow-cosmic transition-all duration-300 hover:scale-125 hover:shadow-neon glass-effect neon-glow",
-                    "bg-gradient-primary border-2 border-primary-glow/30",
-                    "hover:bg-gradient-aurora hover:rotate-12",
+                    "border-2 border-white/30 backdrop-blur-sm",
+                    "hover:rotate-12 text-white",
                     bubble.color
                   )}
                   onClick={bubble.action}
@@ -113,8 +113,8 @@ const FloatingBubbles = () => {
             size="icon"
             className={cn(
               "h-16 w-16 rounded-full shadow-cosmic transition-all duration-500 hover:scale-110 glass-effect",
-              "bg-gradient-neon border-3 border-primary-glow/40 neon-glow",
-              "hover:shadow-glow hover:bg-gradient-aurora",
+              "bg-gradient-primary border-3 border-primary-glow/40 neon-glow",
+              "hover:shadow-glow hover:bg-gradient-secondary",
               isOpen && "rotate-180 scale-110"
             )}
             onClick={toggleBubbles}
@@ -132,7 +132,7 @@ const FloatingBubbles = () => {
           <div className="absolute inset-0 rounded-full bg-gradient-aurora opacity-10 scale-0 animate-pulse pointer-events-none" />
           
           {/* Rotating glow ring */}
-          <div className="absolute -inset-2 rounded-full bg-gradient-neon opacity-30 animate-rotate-slow pointer-events-none blur-sm" />
+          <div className="absolute -inset-2 rounded-full bg-gradient-primary opacity-30 animate-rotate-slow pointer-events-none blur-sm" />
         </div>
       </div>
 
