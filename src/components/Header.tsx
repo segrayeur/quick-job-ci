@@ -96,12 +96,10 @@ const Header = () => {
                 S'inscrire
               </Button>
             )}
-            {!user && (
-              <Button variant="ghost" size="sm" onClick={handleAuthClick} className="hidden sm:flex">
-                <LogIn className="h-4 w-4 mr-1" />
-                <span className="hidden md:inline">Connexion</span>
-              </Button>
-            )}
+            <Button variant="ghost" size="sm" onClick={handleAuthClick} className="hidden sm:flex">
+              <LogIn className="h-4 w-4 mr-1" />
+              <span className="hidden md:inline">Connexion</span>
+            </Button>
             <MobileMenu user={user} />
           </div>
         </div>

@@ -46,12 +46,12 @@ const MobileMenu = ({ user }: MobileMenuProps) => {
       label: "Trouver un job",
       path: "/trouver-un-job",
     },
+    {
+      icon: LogIn,
+      label: "Se connecter",
+      path: "/connexion",
+    },
     ...(!user ? [
-      {
-        icon: LogIn,
-        label: "Se connecter",
-        path: "/connexion",
-      },
       {
         icon: User,
         label: "S'inscrire",
