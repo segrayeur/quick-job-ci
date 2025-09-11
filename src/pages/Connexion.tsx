@@ -17,7 +17,7 @@ const Connexion = () => {
   const [loading, setLoading] = useState(false);
 
   const [signInData, setSignInData] = useState({
-    email: "",
+    emailOrPhone: "",
     password: "",
   });
 
@@ -39,6 +39,27 @@ const Connexion = () => {
 
   const handleInputChange = (field: string, value: string) => {
     setSignInData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Fonction utilitaire pour détecter si l'input est un email ou téléphone
+  const isEmail = (input: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(input);
+  };
+
+  // Fonction pour récupérer l'email depuis le téléphone
+  const getEmailFromPhone = async (phone: string) => {
+    const { data, error } = await supabase
+      .from('users')
+      .select('email')
+      .eq('phone', phone)
+      .single();
+    
+    if (error || !data) {
+      return null;
+    }
+    
+    return data.email;
   };
 
   const redirectBasedOnRole = async (userId: string) => {
@@ -83,7 +104,7 @@ const Connexion = () => {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!signInData.email || !signInData.password) {
+    if (!signInData.emailOrPhone || !signInData.password) {
       toast({
         variant: "destructive",
         title: "Erreur",
@@ -94,8 +115,24 @@ const Connexion = () => {
 
     setLoading(true);
     try {
+      let emailToUse = signInData.emailOrPhone;
+
+      // Si ce n'est pas un email, c'est probablement un téléphone
+      if (!isEmail(signInData.emailOrPhone)) {
+        const email = await getEmailFromPhone(signInData.emailOrPhone);
+        if (!email) {
+          toast({
+            variant: "destructive",
+            title: "Erreur de connexion",
+            description: "Adresse email ou mot de passe incorrect.",
+          });
+          return;
+        }
+        emailToUse = email;
+      }
+
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: signInData.email,
+        email: emailToUse,
         password: signInData.password,
       });
 
@@ -157,12 +194,13 @@ const Connexion = () => {
           <CardContent>
             <form onSubmit={handleSignIn} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="emailOrPhone">Email ou Téléphone</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  value={signInData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
+                  id="emailOrPhone"
+                  type="text"
+                  placeholder="exemple@email.com ou +225 01 02 03 04 05"
+                  value={signInData.emailOrPhone}
+                  onChange={(e) => handleInputChange("emailOrPhone", e.target.value)}
                   required
                 />
               </div>

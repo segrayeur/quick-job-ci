@@ -135,10 +135,23 @@ const Inscription = () => {
 
       toast({
         title: "Inscription réussie !",
-        description: `Votre compte ${signUpData.role === 'candidate' ? 'candidat' : 'recruteur'} a été créé avec succès. Vous pouvez maintenant vous connecter.`,
+        description: `Votre compte ${signUpData.role === 'candidate' ? 'candidat' : 'recruteur'} a été créé avec succès.`,
       });
 
-      navigate("/connexion");
+      // Connecter automatiquement l'utilisateur et rediriger vers son dashboard
+      if (data.session) {
+        // Redirection basée sur le rôle
+        switch (signUpData.role) {
+          case 'recruiter':
+            navigate("/dashboard/recruteur");
+            break;
+          case 'candidate':
+            navigate("/dashboard/candidat");
+            break;
+          default:
+            navigate("/acces-non-autorise");
+        }
+      }
     } catch (error: any) {
       console.error('Signup error:', error);
       toast({
