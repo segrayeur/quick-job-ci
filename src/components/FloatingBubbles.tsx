@@ -98,7 +98,7 @@ const FloatingBubbles = () => {
                 <Button
                   size="icon"
                   className={cn(
-                    "h-12 w-12 rounded-full shadow-lg transition-all duration-200 hover:scale-110 hover:shadow-xl border-2 border-white/20",
+                    "h-10 w-10 rounded-full shadow-lg transition-all duration-200 hover:scale-110 hover:shadow-xl border-2 border-white/20",
                     bubble.color
                   )}
                   onClick={bubble.action}
@@ -110,7 +110,7 @@ const FloatingBubbles = () => {
                 </Button>
                 
                 {/* Tooltip */}
-                <div className="absolute bottom-14 left-1/2 -translate-x-1/2 bg-black/90 text-white text-xs px-2 py-1 rounded-md whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-10 shadow-lg">
+                <div className="absolute bottom-12 left-1/2 -translate-x-1/2 bg-black/90 text-white text-xs px-2 py-1 rounded-md whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-10 shadow-lg">
                   {bubble.label}
                   <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black/90"></div>
                 </div>
@@ -123,7 +123,7 @@ const FloatingBubbles = () => {
         <Button
           size="icon"
           className={cn(
-            "h-16 w-16 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 border-4 border-white/20",
+            "h-14 w-14 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 border-3 border-white/20",
             "bg-gradient-to-r from-primary via-primary-glow to-primary",
             "hover:shadow-primary/25 hover:shadow-2xl",
             isOpen && "rotate-45"
@@ -133,9 +133,9 @@ const FloatingBubbles = () => {
           role="button"
         >
           {isOpen ? (
-            <X className="h-6 w-6 text-primary-foreground" />
+            <X className="h-5 w-5 text-primary-foreground" />
           ) : (
-            <Plus className="h-6 w-6 text-primary-foreground" />
+            <Plus className="h-5 w-5 text-primary-foreground" />
           )}
         </Button>
 

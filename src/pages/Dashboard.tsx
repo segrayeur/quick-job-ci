@@ -79,21 +79,43 @@ const Dashboard = () => {
 
   const fetchUserData = async (userId: string) => {
     try {
-      const { data: profile } = await supabase
+      const { data: profile, error } = await supabase
         .from('users')
         .select('*')
         .eq('user_id', userId)
         .single();
+      
+      if (error) {
+        console.error('Error fetching user data:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger votre profil. Veuillez rafraîchir la page.",
+          variant: "destructive",
+        });
+        return;
+      }
       
       if (profile) {
         profile.applications_created_count = profile.applications_created_count || 0;
         profile.is_vip_candidate = profile.is_vip_candidate || false;
         profile.jobs_published = profile.jobs_published || 0;
         profile.subscription_plan = profile.subscription_plan || 'free';
+        setUserProfile(profile);
+      } else {
+        // Si aucun profil n'existe, rediriger vers la page d'inscription pour compléter le profil
+        toast({
+          title: "Profil incomplet",
+          description: "Veuillez compléter votre profil.",
+        });
+        navigate('/inscription');
       }
-      setUserProfile(profile);
     } catch (error) {
       console.error('Error fetching user data:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur s'est produite lors du chargement du profil.",
+        variant: "destructive",
+      });
     }
   };
 
