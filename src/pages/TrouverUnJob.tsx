@@ -43,7 +43,10 @@ const TrouverUnJob = () => {
   const fetchJobs = async () => {
     try {
       // Use secure function to get jobs without contact information
-      const { data, error } = await supabase.rpc('get_public_jobs');
+      const {
+        data,
+        error
+      } = await supabase.rpc('get_public_jobs');
       if (error) throw error;
       setJobs(data || []);
     } catch (error) {
@@ -156,7 +159,7 @@ const TrouverUnJob = () => {
       <Header />
       
       {/* Header de recherche */}
-      <section className="bg-gradient-hero text-white py-8">
+      <section className="bg-gradient-hero text-white py-8 bg-orange-500">
         <div className="container mx-auto px-4 bg-orange-500">
           <div className="mb-6">
             <Button variant="ghost" onClick={() => navigate("/")} className="text-white bg-gray-950 hover:bg-gray-800">
