@@ -27,7 +27,7 @@ const CrossNotificationSystem = ({ userProfile }: CrossNotificationSystemProps) 
             .from('jobs')
             .select('recruiter_id, title')
             .eq('id', payload.new.job_id)
-            .single();
+            .maybeSingle();
 
           if (job && job.recruiter_id === userProfile.id) {
             toast({
@@ -61,7 +61,7 @@ const CrossNotificationSystem = ({ userProfile }: CrossNotificationSystemProps) 
               .from('jobs')
               .select('title')
               .eq('id', payload.new.job_id)
-              .single();
+              .maybeSingle();
 
             if (job) {
               const statusMessages = {

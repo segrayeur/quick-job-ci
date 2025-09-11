@@ -31,7 +31,7 @@ const AuthGuard = ({ children, requiredRole, redirectTo = "/auth" }: AuthGuardPr
             .from('users')
             .select('*')
             .eq('user_id', session.user.id)
-            .single();
+            .maybeSingle();
           
           setUserProfile(profile);
         } else {
@@ -52,7 +52,7 @@ const AuthGuard = ({ children, requiredRole, redirectTo = "/auth" }: AuthGuardPr
           .from('users')
           .select('*')
           .eq('user_id', session.user.id)
-          .single()
+          .maybeSingle()
           .then(({ data: profile }) => {
             setUserProfile(profile);
             setLoading(false);
