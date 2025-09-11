@@ -14,7 +14,7 @@ interface CandidatePost {
   availability: string;
   created_at: string;
   candidate_id: string;
-  users: {
+  users?: {
     first_name: string;
     last_name: string;
     phone: string;

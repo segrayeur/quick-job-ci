@@ -26,7 +26,7 @@ interface CandidatePost {
   availability: string;
   created_at: string;
   candidate_id: string;
-  users: {
+  users?: {
     first_name: string;
     last_name: string;
     phone: string;
@@ -64,10 +64,7 @@ const TrouverUnCandidat = () => {
     try {
       const { data, error } = await supabase
         .from('candidate_posts')
-        .select(`
-          *,
-          users!inner(first_name, last_name, phone)
-        `)
+        .select('*')
         .eq('status', 'active')
         .order('created_at', { ascending: false });
 
