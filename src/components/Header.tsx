@@ -33,11 +33,7 @@ const Header = () => {
   };
 
   const handleAuthClick = () => {
-    if (user) {
-      navigate("/dashboard");
-    } else {
-      navigate("/connexion");
-    }
+    navigate("/connexion");
   };
 
   return (
@@ -100,19 +96,12 @@ const Header = () => {
                 S'inscrire
               </Button>
             )}
-            <Button variant="ghost" size="sm" onClick={handleAuthClick} className="hidden sm:flex">
-              {user ? (
-                <>
-                  <User className="h-4 w-4 mr-1" />
-                  <span className="hidden md:inline">Dashboard</span>
-                </>
-              ) : (
-                <>
-                  <LogIn className="h-4 w-4 mr-1" />
-                  <span className="hidden md:inline">Connexion</span>
-                </>
-              )}
-            </Button>
+            {!user && (
+              <Button variant="ghost" size="sm" onClick={handleAuthClick} className="hidden sm:flex">
+                <LogIn className="h-4 w-4 mr-1" />
+                <span className="hidden md:inline">Connexion</span>
+              </Button>
+            )}
             <MobileMenu user={user} />
           </div>
         </div>

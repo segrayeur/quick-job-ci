@@ -46,13 +46,7 @@ const MobileMenu = ({ user }: MobileMenuProps) => {
       label: "Trouver un job",
       path: "/trouver-un-job",
     },
-    ...(user ? [
-      {
-        icon: User,
-        label: "Dashboard",
-        path: "/dashboard",
-      }
-    ] : [
+    ...(!user ? [
       {
         icon: LogIn,
         label: "Se connecter",
@@ -63,7 +57,7 @@ const MobileMenu = ({ user }: MobileMenuProps) => {
         label: "S'inscrire",
         path: "/inscription",
       }
-    ]),
+    ] : []),
     {
       icon: Info,
       label: "À propos",
