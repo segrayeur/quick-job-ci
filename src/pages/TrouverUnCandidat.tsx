@@ -1,34 +1,36 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { 
   Search, 
-  MapPin, 
-  DollarSign, 
-  Briefcase, 
-  Clock,
   ArrowLeft,
   Filter,
-  Star
+  Users,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
+import CandidateCard from "@/components/CandidateCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-interface Job {
+interface CandidatePost {
   id: string;
   title: string;
   description: string;
-  amount: number;
+  hourly_rate: number;
   currency: string;
   location: string;
-  category: string | null;
+  skills: string[];
+  availability: string;
   created_at: string;
+  candidate_id: string;
+  users: {
+    first_name: string;
+    last_name: string;
+    phone: string;
+  } | null;
 }
 
 const locations = [
@@ -36,44 +38,46 @@ const locations = [
   "Plateau", "Treichville", "Koumassi", "Port-Bouët", "Abobo"
 ];
 
-const categories = [
-  "Tous", "Déménagement", "Soutien scolaire", "Livraison", "Commerce", 
-  "Ménage", "Enseignement", "Informatique", "Santé", "Restauration", "Autres"
+const availabilityOptions = [
+  "Tous", "Immédiatement", "Dans la semaine", "Dans le mois", "Flexible"
 ];
 
-const TrouverUnJob = () => {
+const TrouverUnCandidat = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("Tous");
-  const [selectedCategory, setSelectedCategory] = useState("Tous");
-  const [salaryRange, setSalaryRange] = useState([0]);
+  const [selectedAvailability, setSelectedAvailability] = useState("Tous");
+  const [rateRange, setRateRange] = useState([0]);
   const [sortBy, setSortBy] = useState("recent");
   const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [jobs, setJobs] = useState<Job[]>([]);
+  const [candidates, setCandidates] = useState<CandidatePost[]>([]);
   const [loading, setLoading] = useState(true);
   const itemsPerPage = 6;
 
   useEffect(() => {
-    fetchJobs();
+    fetchCandidates();
   }, []);
 
-  const fetchJobs = async () => {
+  const fetchCandidates = async () => {
     try {
       const { data, error } = await supabase
-        .from('jobs')
-        .select('*')
-        .eq('status', 'open')
+        .from('candidate_posts')
+        .select(`
+          *,
+          users!inner(first_name, last_name, phone)
+        `)
+        .eq('status', 'active')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setJobs(data || []);
+      setCandidates(data || []);
     } catch (error) {
-      console.error('Error fetching jobs:', error);
+      console.error('Error fetching candidates:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de charger les offres d'emploi",
+        description: "Impossible de charger les candidats",
         variant: "destructive"
       });
     } finally {
@@ -81,22 +85,23 @@ const TrouverUnJob = () => {
     }
   };
 
-  // Filtrage des emplois
-  const filteredJobs = jobs.filter(job => {
-    const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         job.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesLocation = selectedLocation === "Tous" || job.location === selectedLocation;
-    const matchesCategory = selectedCategory === "Tous" || job.category === selectedCategory;
-    const matchesSalary = salaryRange[0] === 0 || job.amount >= salaryRange[0] * 1000;
+  // Filtrage des candidats
+  const filteredCandidates = candidates.filter(candidate => {
+    const matchesSearch = candidate.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         candidate.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         candidate.skills?.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesLocation = selectedLocation === "Tous" || candidate.location === selectedLocation;
+    const matchesAvailability = selectedAvailability === "Tous" || candidate.availability === selectedAvailability;
+    const matchesRate = rateRange[0] === 0 || candidate.hourly_rate >= rateRange[0] * 1000;
     
-    return matchesSearch && matchesLocation && matchesCategory && matchesSalary;
+    return matchesSearch && matchesLocation && matchesAvailability && matchesRate;
   });
 
-  // Tri des emplois
-  const sortedJobs = [...filteredJobs].sort((a, b) => {
+  // Tri des candidats
+  const sortedCandidates = [...filteredCandidates].sort((a, b) => {
     switch (sortBy) {
-      case "salary":
-        return b.amount - a.amount;
+      case "rate":
+        return b.hourly_rate - a.hourly_rate;
       case "recent":
       default:
         return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
@@ -104,84 +109,32 @@ const TrouverUnJob = () => {
   });
 
   // Pagination
-  const totalPages = Math.ceil(sortedJobs.length / itemsPerPage);
-  const paginatedJobs = sortedJobs.slice(
+  const totalPages = Math.ceil(sortedCandidates.length / itemsPerPage);
+  const paginatedCandidates = sortedCandidates.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  const formatSalary = (amount: number, currency: string) => {
-    return `${amount.toLocaleString()} ${currency}`;
-  };
-
-  const handleViewMore = (jobId: string) => {
+  const handleViewMore = (candidateId: string) => {
     // Check if user is authenticated
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         toast({
           title: "Connexion requise",
-          description: "Vous devez être connecté pour voir les détails complets du job",
+          description: "Vous devez être connecté pour voir le profil complet du candidat",
           variant: "destructive"
         });
         navigate("/connexion");
         return;
       }
       
-      // Redirect to dashboard job details
-      navigate(`/dashboard?view=job&id=${jobId}`);
+      // Redirect to dashboard candidate profile view
+      navigate(`/dashboard?view=candidate&id=${candidateId}`);
     };
     
     checkAuth();
   };
-
-  const JobCard = ({ job }: { job: Job }) => (
-    <Card className="hover:shadow-elevated transition-shadow cursor-pointer">
-      <CardHeader>
-        <div className="flex justify-between items-start">
-          <div className="flex-1">
-            <CardTitle className="text-lg mb-2">{job.title}</CardTitle>
-            <CardDescription className="text-sm text-muted-foreground">
-              {job.category || "Autre"}
-            </CardDescription>
-          </div>
-          <div className="text-right">
-            <p className="text-lg font-bold text-primary">{formatSalary(job.amount, job.currency)}</p>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-          {job.description}
-        </p>
-        
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-1 text-sm text-muted-foreground">
-              <MapPin className="h-4 w-4" />
-              <span>{job.location}</span>
-            </div>
-            <div className="flex items-center space-x-1 text-sm text-muted-foreground">
-              <Clock className="h-4 w-4" />
-              <span>{new Date(job.created_at).toLocaleDateString('fr-FR')}</span>
-            </div>
-          </div>
-          
-          {job.category && <Badge variant="outline">{job.category}</Badge>}
-          
-          <div className="pt-2">
-            <Button 
-              size="sm" 
-              className="w-full bg-gradient-primary hover:opacity-90 transition-opacity"
-              onClick={() => handleViewMore(job.id)}
-            >
-              Voir plus d'informations
-            </Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -203,10 +156,10 @@ const TrouverUnJob = () => {
           
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
-              Trouvez votre job idéal
+              Trouvez le candidat idéal
             </h1>
             <p className="text-lg opacity-90">
-              {sortedJobs.length} offres d'emploi disponibles
+              {sortedCandidates.length} candidats actifs disponibles
             </p>
           </div>
           
@@ -216,7 +169,7 @@ const TrouverUnJob = () => {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                 <Input
-                  placeholder="Rechercher par titre, entreprise ou mot-clé..."
+                  placeholder="Rechercher par compétence, titre ou mot-clé..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 py-3 text-black bg-white"
@@ -257,31 +210,30 @@ const TrouverUnJob = () => {
               </div>
               
               <div>
-                <label className="text-sm font-medium mb-2 block">Catégorie</label>
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <label className="text-sm font-medium mb-2 block">Disponibilité</label>
+                <Select value={selectedAvailability} onValueChange={setSelectedAvailability}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
+                    {availabilityOptions.map((availability) => (
+                      <SelectItem key={availability} value={availability}>
+                        {availability}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               
-              
               <div>
                 <label className="text-sm font-medium mb-2 block">
-                  Salaire minimum: {salaryRange[0] * 1000} FCFA
+                  Tarif minimum: {rateRange[0] * 1000} FCFA/h
                 </label>
                 <Slider
-                  value={salaryRange}
-                  onValueChange={setSalaryRange}
-                  max={500}
-                  step={10}
+                  value={rateRange}
+                  onValueChange={setRateRange}
+                  max={100}
+                  step={5}
                   className="mt-2"
                 />
               </div>
@@ -296,7 +248,7 @@ const TrouverUnJob = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="recent">Plus récent</SelectItem>
-                    <SelectItem value="salary">Salaire</SelectItem>
+                    <SelectItem value="rate">Tarif horaire</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -306,8 +258,8 @@ const TrouverUnJob = () => {
                 onClick={() => {
                   setSearchTerm("");
                   setSelectedLocation("Tous");
-                  setSelectedCategory("Tous");
-                  setSalaryRange([0]);
+                  setSelectedAvailability("Tous");
+                  setRateRange([0]);
                   setCurrentPage(1);
                 }}
               >
@@ -323,23 +275,27 @@ const TrouverUnJob = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold flex items-center">
-              <Briefcase className="mr-2 h-5 w-5 text-primary" />
-              {sortedJobs.length} emplois trouvés
+              <Users className="mr-2 h-5 w-5 text-primary" />
+              {sortedCandidates.length} candidats trouvés
             </h2>
           </div>
 
           {loading ? (
             <div className="text-center py-12">
               <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
-                <Briefcase className="h-8 w-8 text-muted-foreground animate-pulse" />
+                <Users className="h-8 w-8 text-muted-foreground animate-pulse" />
               </div>
-              <p className="text-muted-foreground">Chargement des offres...</p>
+              <p className="text-muted-foreground">Chargement des candidats...</p>
             </div>
-          ) : paginatedJobs.length > 0 ? (
+          ) : paginatedCandidates.length > 0 ? (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                {paginatedJobs.map((job) => (
-                  <JobCard key={job.id} job={job} />
+                {paginatedCandidates.map((candidate) => (
+                  <CandidateCard 
+                    key={candidate.id} 
+                    candidate={candidate}
+                    onViewMore={() => handleViewMore(candidate.id)}
+                  />
                 ))}
               </div>
               
@@ -380,7 +336,7 @@ const TrouverUnJob = () => {
                 <Search className="h-8 w-8 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-medium mb-2">
-                Aucun emploi trouvé
+                Aucun candidat trouvé
               </h3>
               <p className="text-muted-foreground mb-4">
                 Essayez de modifier vos critères de recherche
@@ -396,4 +352,4 @@ const TrouverUnJob = () => {
   );
 };
 
-export default TrouverUnJob;
+export default TrouverUnCandidat;

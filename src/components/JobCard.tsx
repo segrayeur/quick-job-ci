@@ -16,6 +16,7 @@ interface JobCardProps {
   contactPhone?: string;
   contactWhatsapp?: string;
   onApply?: () => void;
+  onViewMore?: () => void;
 }
 
 const JobCard = ({ 
@@ -29,7 +30,8 @@ const JobCard = ({
   showContactInfo = false,
   contactPhone,
   contactWhatsapp,
-  onApply
+  onApply,
+  onViewMore
 }: JobCardProps) => {
   return (
     <Card className="w-full shadow-card hover:shadow-elevated transition-all duration-300 border-l-4 border-l-primary">
@@ -83,9 +85,9 @@ const JobCard = ({
         )}
         <Button 
           className="w-full bg-gradient-primary hover:opacity-90 transition-opacity"
-          onClick={onApply}
+          onClick={onViewMore || onApply}
         >
-          {showContactInfo ? "Contacter le recruteur" : "Postuler maintenant"}
+          {onViewMore ? "Voir plus d'informations" : (showContactInfo ? "Contacter le recruteur" : "Postuler maintenant")}
         </Button>
       </CardFooter>
     </Card>

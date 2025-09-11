@@ -127,6 +127,15 @@ const Index = () => {
               size="lg" 
               variant="outline" 
               className="flex-1 border-white text-white hover:bg-white hover:text-primary transition-colors"
+              onClick={() => navigate("/trouver-un-candidat")}
+            >
+              <Users className="mr-2 h-5 w-5" />
+              Trouver un candidat
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="flex-1 border-white text-white hover:bg-white hover:text-primary transition-colors"
               onClick={handlePublishClick}
             >
               <TrendingUp className="mr-2 h-5 w-5" />
@@ -190,6 +199,14 @@ const Index = () => {
             </Button>
             <Button 
               size="lg" 
+              className="bg-gradient-primary hover:opacity-90 transition-opacity"
+              onClick={() => navigate("/trouver-un-candidat")}
+            >
+              <Users className="mr-2 h-5 w-5" />
+              Trouver un candidat
+            </Button>
+            <Button 
+              size="lg" 
               variant="outline"
               onClick={() => navigate("/inscription")}
             >
@@ -248,7 +265,23 @@ const Index = () => {
           ) : filteredJobs.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredJobs.map((job) => (
-                <JobCard key={job.id} {...job} />
+                <JobCard 
+                  key={job.id} 
+                  {...job}
+                  onViewMore={async () => {
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (!session) {
+                      toast({
+                        title: "Connexion requise",
+                        description: "Vous devez être connecté pour voir les détails complets du job",
+                        variant: "destructive"
+                      });
+                      navigate("/connexion");
+                      return;
+                    }
+                    navigate(`/dashboard?view=job&id=${job.id}`);
+                  }}
+                />
               ))}
             </div>
           ) : (
