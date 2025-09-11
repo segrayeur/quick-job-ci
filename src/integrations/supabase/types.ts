@@ -603,9 +603,25 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_user_internal_id: {
+        Args: { user_uuid?: string }
+        Returns: string
+      }
       get_user_role: {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["user_role"]
+      }
+      get_user_role_secure: {
+        Args: { user_uuid?: string }
+        Returns: string
+      }
+      is_job_owner: {
+        Args: { job_id: string; user_uuid?: string }
+        Returns: boolean
+      }
+      is_recruiter: {
+        Args: { user_uuid?: string }
+        Returns: boolean
       }
       send_notification: {
         Args: {
