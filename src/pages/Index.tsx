@@ -104,12 +104,8 @@ const Index = () => {
       {/* Hero Section */}
       <section className="bg-gradient-hero text-white py-12 md:py-16 bg-orange-500">
         <div className="container mx-auto px-4 text-center bg-orange-500">
-          <h1 className="text-3xl md:text-5xl font-bold mb-4 text-green-900">
-            Trouvez un job en Côte d'Ivoire
-          </h1>
-          <p className="text-lg md:text-xl mb-8 opacity-90">
-            La plateforme qui connecte les jeunes aux opportunités de petits boulots
-          </p>
+          <h1 className="text-3xl md:text-5xl font-bold mb-4 text-green-900">QuickJob CI</h1>
+          <p className="text-lg md:text-xl mb-8 opacity-90">La plateforme qui connecte les jeunes aux opportunités de petits boulots et d'emplois rapides</p>
           <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
             <Button size="lg" className="flex-1 bg-white text-primary hover:bg-white/90 transition-colors" onClick={() => navigate("/trouver-un-job")}>
               <Briefcase className="mr-2 h-5 w-5" />
