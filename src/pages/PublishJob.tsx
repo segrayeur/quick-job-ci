@@ -17,15 +17,31 @@ const PublishJob = () => {
     description: "",
     amount: "",
     location: "",
+    commune: "",
+    quartier: "",
     contact: "",
     whatsapp: "",
-    category: ""
+    category: "",
+    startDate: "",
+    endDate: ""
   });
 
-  const locations = [
-    "Cocody", "Yopougon", "Adjamé", "Plateau", "Marcory",
-    "Treichville", "Koumassi", "Port-Bouët", "Abobo", "Attécoubé"
-  ];
+  const cities = ["Abidjan", "Bouaké", "Daloa", "San-Pédro", "Yamoussoukro"];
+  
+  const communes = {
+    Abidjan: ["Cocody", "Yopougon", "Adjamé", "Plateau", "Marcory", "Treichville", "Koumassi", "Port-Bouët", "Abobo", "Attécoubé"],
+    Bouaké: ["Gonfreville", "Dar es Salam", "Koko", "Brobo", "Sakassou"],
+    Daloa: ["Lobia", "Gadouan", "Tazibouo", "Issia", "Vavoua"],
+    "San-Pédro": ["Sassandra", "Soubré", "Méagui", "Tabou", "Grand-Béréby"],
+    Yamoussoukro: ["Attiégouakro", "Kossou", "Lolobo", "Didiévi"]
+  };
+
+  const quartiers = {
+    Cocody: ["Riviera", "Deux Plateaux", "Angré", "Ambassades", "Blockhaus"],
+    Yopougon: ["Selmer", "Niangon", "Maroc", "Sideci", "Wassakara"],
+    Adjamé: ["220 logements", "Bracodi", "Mairie", "Nouveau Quartier", "Williamsville"],
+    Plateau: ["Centre-ville", "Administratif", "Fin Prêt", "Millionnaire", "Solibra"]
+  };
 
   const categories = [
     "Livraison", "Ménage", "Déménagement", "Soutien scolaire",
@@ -35,10 +51,21 @@ const PublishJob = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.title || !formData.description || !formData.amount || !formData.location) {
+    if (!formData.title || !formData.description || !formData.amount || !formData.location || !formData.startDate || !formData.endDate) {
       toast({
         title: "Erreur",
         description: "Veuillez remplir tous les champs obligatoires",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const startDate = new Date(formData.startDate);
+    const endDate = new Date(formData.endDate);
+    if (endDate <= startDate) {
+      toast({
+        title: "Erreur",
+        description: "La date de fin doit être postérieure à la date de début",
         variant: "destructive"
       });
       return;
@@ -128,52 +155,127 @@ const PublishJob = () => {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label>Localisation *</Label>
-                <Select onValueChange={(value) => handleInputChange("location", value)}>
-                  <SelectTrigger>
-                    <MapPin className="h-4 w-4 mr-2" />
-                    <SelectValue placeholder="Sélectionnez votre quartier" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {locations.map((location) => (
-                      <SelectItem key={location} value={location}>
-                        {location}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+               <div className="space-y-4">
+                 <Label>Localisation *</Label>
+                 <div className="grid grid-cols-3 gap-4">
+                   <div className="space-y-2">
+                     <Label>Ville *</Label>
+                     <Select onValueChange={(value) => {
+                       handleInputChange("location", value);
+                       handleInputChange("commune", "");
+                       handleInputChange("quartier", "");
+                     }}>
+                       <SelectTrigger>
+                         <SelectValue placeholder="Choisir une ville" />
+                       </SelectTrigger>
+                       <SelectContent>
+                         {cities.map((city) => (
+                           <SelectItem key={city} value={city}>
+                             {city}
+                           </SelectItem>
+                         ))}
+                       </SelectContent>
+                     </Select>
+                   </div>
+                   
+                   <div className="space-y-2">
+                     <Label>Commune *</Label>
+                     <Select 
+                       value={formData.commune}
+                       onValueChange={(value) => {
+                         handleInputChange("commune", value);
+                         handleInputChange("quartier", "");
+                       }}
+                       disabled={!formData.location}
+                     >
+                       <SelectTrigger>
+                         <SelectValue placeholder="Choisir une commune" />
+                       </SelectTrigger>
+                       <SelectContent>
+                         {formData.location && communes[formData.location as keyof typeof communes]?.map((commune) => (
+                           <SelectItem key={commune} value={commune}>
+                             {commune}
+                           </SelectItem>
+                         ))}
+                       </SelectContent>
+                     </Select>
+                   </div>
+                   
+                   <div className="space-y-2">
+                     <Label>Quartier</Label>
+                     <Select 
+                       value={formData.quartier}
+                       onValueChange={(value) => handleInputChange("quartier", value)}
+                       disabled={!formData.commune}
+                     >
+                       <SelectTrigger>
+                         <SelectValue placeholder="Choisir un quartier" />
+                       </SelectTrigger>
+                       <SelectContent>
+                         {formData.commune && quartiers[formData.commune as keyof typeof quartiers]?.map((quartier) => (
+                           <SelectItem key={quartier} value={quartier}>
+                             {quartier}
+                           </SelectItem>
+                         ))}
+                       </SelectContent>
+                     </Select>
+                   </div>
+                 </div>
+               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="contact">Téléphone *</Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="contact"
-                      placeholder="+225 07 XX XX XX XX"
-                      value={formData.contact}
-                      onChange={(e) => handleInputChange("contact", e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div className="space-y-2">
+                   <Label htmlFor="startDate">Date de début *</Label>
+                   <Input
+                     id="startDate"
+                     type="date"
+                     value={formData.startDate}
+                     onChange={(e) => handleInputChange("startDate", e.target.value)}
+                     min={new Date().toISOString().split('T')[0]}
+                   />
+                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="whatsapp">WhatsApp (optionnel)</Label>
-                  <div className="relative">
-                    <MessageCircle className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="whatsapp"
-                      placeholder="+225 07 XX XX XX XX"
-                      value={formData.whatsapp}
-                      onChange={(e) => handleInputChange("whatsapp", e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-              </div>
+                 <div className="space-y-2">
+                   <Label htmlFor="endDate">Date de fin *</Label>
+                   <Input
+                     id="endDate"
+                     type="date"
+                     value={formData.endDate}
+                     onChange={(e) => handleInputChange("endDate", e.target.value)}
+                     min={formData.startDate || new Date().toISOString().split('T')[0]}
+                   />
+                 </div>
+               </div>
+
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div className="space-y-2">
+                   <Label htmlFor="contact">Téléphone *</Label>
+                   <div className="relative">
+                     <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                     <Input
+                       id="contact"
+                       placeholder="+225 07 XX XX XX XX"
+                       value={formData.contact}
+                       onChange={(e) => handleInputChange("contact", e.target.value)}
+                       className="pl-10"
+                     />
+                   </div>
+                 </div>
+
+                 <div className="space-y-2">
+                   <Label htmlFor="whatsapp">WhatsApp (optionnel)</Label>
+                   <div className="relative">
+                     <MessageCircle className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                     <Input
+                       id="whatsapp"
+                       placeholder="+225 07 XX XX XX XX"
+                       value={formData.whatsapp}
+                       onChange={(e) => handleInputChange("whatsapp", e.target.value)}
+                       className="pl-10"
+                     />
+                   </div>
+                 </div>
+               </div>
 
               <Button 
                 type="submit" 
