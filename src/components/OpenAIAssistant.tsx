@@ -133,7 +133,7 @@ const OpenAIAssistant = ({ isOpen, onClose }: OpenAIAssistantProps) => {
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="text-white hover:bg-white/20 h-8 w-8 p-0"
+            className="text-foreground hover:bg-white/20 h-8 w-8 p-0"
           >
             <X className="h-4 w-4" />
           </Button>
@@ -151,7 +151,7 @@ const OpenAIAssistant = ({ isOpen, onClose }: OpenAIAssistantProps) => {
               <div
                 className={`max-w-[80%] px-3 py-2 rounded-lg text-sm ${
                   message.isUser
-                    ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
+                    ? 'bg-gradient-to-r from-orange-500 to-red-500 text-foreground'
                     : 'bg-muted text-foreground'
                 }`}
               >

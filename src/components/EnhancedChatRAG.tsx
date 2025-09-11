@@ -100,7 +100,7 @@ const EnhancedChatRAG = ({ isOpen, onToggle }: EnhancedChatRAGProps) => {
             "hover:shadow-glow hover:bg-gradient-neon animate-bounce-subtle"
           )}
         >
-          <MessageCircle className="h-6 w-6 text-white drop-shadow-lg" />
+          <MessageCircle className="h-6 w-6 text-foreground drop-shadow-lg" />
         </Button>
         
         {/* Floating sparkles */}
@@ -176,9 +176,9 @@ const EnhancedChatRAG = ({ isOpen, onToggle }: EnhancedChatRAGProps) => {
                         : 'bg-gradient-secondary border border-secondary-glow/30'
                     )}>
                       {message.role === 'user' ? (
-                        <User className="h-4 w-4 text-white" />
+                        <User className="h-4 w-4 text-foreground" />
                       ) : (
-                        <Bot className="h-4 w-4 text-white animate-pulse" />
+                        <Bot className="h-4 w-4 text-foreground animate-pulse" />
                       )}
                     </div>
                     <div className={cn(
@@ -198,7 +198,7 @@ const EnhancedChatRAG = ({ isOpen, onToggle }: EnhancedChatRAGProps) => {
                 {isLoading && (
                   <div className="flex items-start gap-3 animate-fade-in">
                     <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-secondary border border-secondary-glow/30 flex items-center justify-center shadow-glow">
-                      <Bot className="h-4 w-4 text-white animate-pulse" />
+                      <Bot className="h-4 w-4 text-foreground animate-pulse" />
                     </div>
                     <div className="glass-effect rounded-lg p-3 bg-gradient-secondary/20 border border-secondary-glow/30 shadow-cosmic">
                       <div className="flex gap-1">

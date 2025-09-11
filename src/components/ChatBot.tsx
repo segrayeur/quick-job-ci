@@ -79,7 +79,7 @@ const ChatBot = () => {
   return <>
       {/* Floating Chat Button */}
       {!isOpen && <Button onClick={() => setIsOpen(true)} size="icon" className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-gradient-primary hover:opacity-90 shadow-elevated z-50 bg-zinc-950 hover:bg-zinc-800">
-          <MessageCircle className="h-6 w-6 text-white" />
+          <MessageCircle className="h-6 w-6 text-foreground" />
         </Button>}
 
       {/* Chat Window */}
@@ -89,7 +89,7 @@ const ChatBot = () => {
               <CardTitle className="text-lg font-semibold">
                 Assistant QuickJob CI
               </CardTitle>
-              <Button variant="ghost" size="sm" onClick={() => setIsOpen(false)} className="text-white hover:bg-white/20 h-8 w-8 p-0">
+              <Button variant="ghost" size="sm" onClick={() => setIsOpen(false)} className="text-foreground hover:bg-white/20 h-8 w-8 p-0">
                 <X className="h-4 w-4" />
               </Button>
             </div>

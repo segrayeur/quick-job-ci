@@ -128,11 +128,11 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Chargement...</div>;
+    return <div className="min-h-screen flex items-center justify-center text-foreground">Chargement...</div>;
   }
 
   if (!userProfile) {
-    return <div className="min-h-screen flex items-center justify-center">Erreur de chargement du profil</div>;
+    return <div className="min-h-screen flex items-center justify-center text-foreground">Erreur de chargement du profil</div>;
   }
 
   return (

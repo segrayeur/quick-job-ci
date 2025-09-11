@@ -75,7 +75,7 @@ const MobileMenu = ({ user }: MobileMenuProps) => {
         <SheetHeader>
           <SheetTitle className="flex items-center space-x-2">
             <div className="h-8 w-8 rounded-lg bg-gradient-primary flex items-center justify-center">
-              <span className="text-white font-bold text-sm">QJ</span>
+              <span className="text-foreground font-bold text-sm">QJ</span>
             </div>
             <span>QuickJob CI</span>
           </SheetTitle>

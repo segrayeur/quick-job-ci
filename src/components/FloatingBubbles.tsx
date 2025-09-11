@@ -94,7 +94,7 @@ const FloatingBubbles = () => {
                     logInteraction('bubble_hover', { bubbleId: bubble.id, label: bubble.label });
                   }}
                 >
-                  <bubble.icon className="h-5 w-5 text-white drop-shadow-lg" />
+                  <bubble.icon className="h-5 w-5 text-foreground drop-shadow-lg" />
                 </Button>
               </div>
               
@@ -121,9 +121,9 @@ const FloatingBubbles = () => {
             role="button"
           >
             {isOpen ? (
-              <X className="h-6 w-6 text-white drop-shadow-lg animate-pulse" />
+              <X className="h-6 w-6 text-foreground drop-shadow-lg animate-pulse" />
             ) : (
-              <Plus className="h-6 w-6 text-white drop-shadow-lg animate-bounce-subtle" />
+              <Plus className="h-6 w-6 text-foreground drop-shadow-lg animate-bounce-subtle" />
             )}
           </Button>
 
