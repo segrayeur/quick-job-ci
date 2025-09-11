@@ -14,6 +14,7 @@ import RecruiterStats from "@/components/RecruiterStats";
 import RecruiterSubscriptionManager from "@/components/RecruiterSubscriptionManager";
 import NotificationSystem from "@/components/NotificationSystem";
 import CrossNotificationSystem from "@/components/CrossNotificationSystem";
+import EnhancedChatRAG from "@/components/EnhancedChatRAG";
 
 interface UserProfile {
   id: string;
@@ -46,6 +47,7 @@ const Dashboard = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [chatRAGOpen, setChatRAGOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'profile';
   const navigate = useNavigate();
@@ -135,38 +137,48 @@ const Dashboard = () => {
 
   return (
     <AuthGuard>
-      <SidebarProvider>
-        <div className="min-h-screen flex w-full">
-          <DashboardSidebar userRole={userProfile?.role || 'candidate'} />
-          
-          <SidebarInset className="flex-1">
-            <main className="flex-1 p-6">
-              {activeTab === 'profile' && <SimpleProfile userProfile={userProfile!} onProfileUpdate={refreshProfile} />}
-              {activeTab === 'applications' && userProfile?.role === 'candidate' && (
-                <CandidateApplications userProfile={userProfile} />
-              )}
-              {activeTab === 'applications' && userProfile?.role === 'recruiter' && (
-                <RecruiterApplications userProfile={userProfile} />
-              )}
-              {activeTab === 'jobs' && userProfile?.role === 'recruiter' && (
-                <RecruiterJobsManager userProfile={userProfile} />
-              )}
-              {activeTab === 'stats' && userProfile?.role === 'recruiter' && (
-                <RecruiterStats userProfile={userProfile} />
-              )}
-              {activeTab === 'subscription' && userProfile?.role === 'recruiter' && (
-                <RecruiterSubscriptionManager userProfile={userProfile} onUpgrade={refreshProfile} />
-              )}
-              {activeTab === 'notifications' && (
-                <NotificationSystem userProfile={userProfile} />
-              )}
-            </main>
-          </SidebarInset>
-          
-          {/* Cross-notification system for real-time updates */}
-          <CrossNotificationSystem userProfile={userProfile!} />
-        </div>
-      </SidebarProvider>
+      <div className="min-h-screen bg-gradient-cosmic animate-fade-in">
+        <SidebarProvider>
+          <div className="min-h-screen flex w-full">
+            <DashboardSidebar userRole={userProfile?.role || 'candidate'} />
+            
+            <SidebarInset className="flex-1">
+              <main className="flex-1 p-6">
+                <div className="animate-slide-up">
+                  {activeTab === 'profile' && <SimpleProfile userProfile={userProfile!} onProfileUpdate={refreshProfile} />}
+                  {activeTab === 'applications' && userProfile?.role === 'candidate' && (
+                    <CandidateApplications userProfile={userProfile} />
+                  )}
+                  {activeTab === 'applications' && userProfile?.role === 'recruiter' && (
+                    <RecruiterApplications userProfile={userProfile} />
+                  )}
+                  {activeTab === 'jobs' && userProfile?.role === 'recruiter' && (
+                    <RecruiterJobsManager userProfile={userProfile} />
+                  )}
+                  {activeTab === 'stats' && userProfile?.role === 'recruiter' && (
+                    <RecruiterStats userProfile={userProfile} />
+                  )}
+                  {activeTab === 'subscription' && userProfile?.role === 'recruiter' && (
+                    <RecruiterSubscriptionManager userProfile={userProfile} onUpgrade={refreshProfile} />
+                  )}
+                  {activeTab === 'notifications' && (
+                    <NotificationSystem userProfile={userProfile} />
+                  )}
+                </div>
+              </main>
+            </SidebarInset>
+            
+            {/* Cross-notification system for real-time updates */}
+            <CrossNotificationSystem userProfile={userProfile!} />
+          </div>
+        </SidebarProvider>
+        
+        {/* Enhanced Chat RAG positioned on the right */}
+        <EnhancedChatRAG 
+          isOpen={chatRAGOpen} 
+          onToggle={() => setChatRAGOpen(!chatRAGOpen)} 
+        />
+      </div>
     </AuthGuard>
   );
 };

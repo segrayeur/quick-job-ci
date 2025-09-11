@@ -17,7 +17,7 @@ const FloatingBubbles = () => {
   const [isOpenAIOpen, setIsOpenAIOpen] = useState(false);
 
   // Log interaction function
-  const logInteraction = async (type: string) => {
+  const logInteraction = async (type: string, data?: any) => {
     try {
       const sessionId = Math.random().toString(36).substring(7);
       await supabase.from('interaction_logs').insert({
@@ -30,41 +30,30 @@ const FloatingBubbles = () => {
     }
   };
 
-  const bubbleActions = [
+  const toggleBubbles = () => {
+    setIsOpen(!isOpen);
+    logInteraction(isOpen ? 'bubbles_close' : 'bubbles_open');
+  };
+
+  const bubbles = [
     {
+      id: 'whatsapp',
       icon: MessageSquare,
-      label: "WhatsApp",
+      label: "WhatsApp Support",
       color: "bg-green-500 hover:bg-green-600",
       action: () => {
-        logInteraction('whatsapp');
+        logInteraction('whatsapp', { bubbleId: 'whatsapp', label: 'WhatsApp Support' });
         const message = encodeURIComponent("Salut ! Je suis intéressé par QuickJob CI 👋");
         window.open(`https://wa.me/2250565868786?text=${message}`, '_blank');
       }
     },
     {
-      icon: Mail,
-      label: "Contact Email",
-      color: "bg-blue-500 hover:bg-blue-600", 
-      action: () => {
-        logInteraction('contact');
-        window.open("mailto:uauroratech2222@hotmail.com?subject=Contact QuickJob CI", '_blank');
-      }
-    },
-    {
-      icon: Bot,
-      label: "Chatbot QuickJob (RAG)",
-      color: "bg-purple-500 hover:bg-purple-600",
-      action: () => {
-        logInteraction('chatbot_rag');
-        document.dispatchEvent(new CustomEvent('openChatbot'));
-      }
-    },
-    {
+      id: 'openai',
       icon: Brain,
-      label: "OpenAI Assistant", 
+      label: "Assistant IA OpenAI",
       color: "bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600",
       action: () => {
-        logInteraction('openai_assistant');
+        logInteraction('openai_assistant', { bubbleId: 'openai', label: 'Assistant IA OpenAI' });
         setIsOpenAIOpen(true);
       }
     }
@@ -72,81 +61,79 @@ const FloatingBubbles = () => {
 
   return (
     <>
-      <div className="fixed bottom-6 right-6 z-[9998] flex flex-col items-end"
-           style={{ 
-             paddingBottom: 'env(safe-area-inset-bottom)', 
-             paddingRight: 'env(safe-area-inset-right)' 
-           }}>
-        {/* Action Bubbles */}
-        <div className={cn(
-          "flex flex-col gap-3 mb-4 transition-all duration-300 transform origin-bottom",
-          isOpen ? "scale-100 opacity-100 translate-y-0" : "scale-90 opacity-0 translate-y-4 pointer-events-none"
-        )}>
-          {bubbleActions.map((bubble, index) => {
-            const Icon = bubble.icon;
-            return (
-              <div
-                key={index}
+      <div className="fixed bottom-6 left-6 z-50">
+        {/* Bubble buttons container */}
+        <div 
+          className={cn(
+            "absolute bottom-16 left-0 flex flex-col-reverse gap-4 transition-all duration-500 origin-bottom-left",
+            isOpen ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-75 translate-y-4 pointer-events-none"
+          )}
+        >
+          {bubbles.map((bubble, index) => (
+            <div key={bubble.id} className="relative group">
+              {/* Bubble button with enhanced animations */}
+              <div 
                 className={cn(
-                  "relative group transition-all duration-200",
-                  isOpen ? "" : ""
+                  "transition-all duration-500 bounce-in floating",
+                  isOpen && `delay-[${index * 150}ms]`
                 )}
-                style={{ 
-                  transitionDelay: isOpen ? `${index * 50}ms` : `${(bubbleActions.length - index) * 50}ms` 
+                style={{
+                  animationDelay: isOpen ? `${index * 150}ms` : '0ms'
                 }}
               >
                 <Button
                   size="icon"
                   className={cn(
-                    "h-10 w-10 rounded-full shadow-lg transition-all duration-200 hover:scale-110 hover:shadow-xl border-2 border-white/20",
+                    "h-12 w-12 rounded-full shadow-cosmic transition-all duration-300 hover:scale-125 hover:shadow-neon glass-effect neon-glow",
+                    "bg-gradient-primary border-2 border-primary-glow/30",
+                    "hover:bg-gradient-aurora hover:rotate-12",
                     bubble.color
                   )}
                   onClick={bubble.action}
-                  aria-label={bubble.label}
-                  role="button"
+                  onMouseEnter={() => {
+                    logInteraction('bubble_hover', { bubbleId: bubble.id, label: bubble.label });
+                  }}
                 >
-                  <Icon className="h-4 w-4 text-white" />
-                  <span className="sr-only">{bubble.label}</span>
+                  <bubble.icon className="h-5 w-5 text-white drop-shadow-lg" />
                 </Button>
-                
-                {/* Tooltip */}
-                <div className="absolute bottom-12 left-1/2 -translate-x-1/2 bg-black/90 text-white text-xs px-2 py-1 rounded-md whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-10 shadow-lg">
-                  {bubble.label}
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black/90"></div>
-                </div>
               </div>
-            );
-          })}
+              
+              {/* Enhanced tooltip */}
+              <div className="absolute bottom-14 left-1/2 -translate-x-1/2 glass-effect text-white text-sm px-3 py-2 rounded-lg whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-300 z-10 shadow-cosmic border border-primary-glow/30">
+                {bubble.label}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-primary-glow/50"></div>
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* Main Toggle Button */}
-        <Button
-          size="icon"
-          className={cn(
-            "h-14 w-14 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 border-3 border-white/20",
-            "bg-gradient-to-r from-primary via-primary-glow to-primary",
-            "hover:shadow-primary/25 hover:shadow-2xl",
-            isOpen && "rotate-45"
-          )}
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label={isOpen ? "Fermer le menu" : "Ouvrir le menu"}
-          role="button"
-        >
-          {isOpen ? (
-            <X className="h-5 w-5 text-primary-foreground" />
-          ) : (
-            <Plus className="h-5 w-5 text-primary-foreground" />
-          )}
-        </Button>
+        {/* Enhanced main toggle button */}
+        <div className="relative">
+          <Button
+            size="icon"
+            className={cn(
+              "h-16 w-16 rounded-full shadow-cosmic transition-all duration-500 hover:scale-110 glass-effect",
+              "bg-gradient-neon border-3 border-primary-glow/40 neon-glow",
+              "hover:shadow-glow hover:bg-gradient-aurora",
+              isOpen && "rotate-180 scale-110"
+            )}
+            onClick={toggleBubbles}
+            role="button"
+          >
+            {isOpen ? (
+              <X className="h-6 w-6 text-white drop-shadow-lg animate-pulse" />
+            ) : (
+              <Plus className="h-6 w-6 text-white drop-shadow-lg animate-bounce-subtle" />
+            )}
+          </Button>
 
-        {/* Animated Background Ring */}
-        <div className={cn(
-          "absolute inset-0 rounded-full border-2 border-primary/30 transition-all duration-1000",
-          isOpen ? "scale-150 opacity-0" : "scale-100 opacity-100"
-        )} />
-        
-        {/* Pulse Animation */}
-        <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
+          {/* Enhanced ripple effects */}
+          <div className="absolute inset-0 rounded-full bg-gradient-primary opacity-20 scale-0 animate-ping pointer-events-none" />
+          <div className="absolute inset-0 rounded-full bg-gradient-aurora opacity-10 scale-0 animate-pulse pointer-events-none" />
+          
+          {/* Rotating glow ring */}
+          <div className="absolute -inset-2 rounded-full bg-gradient-neon opacity-30 animate-rotate-slow pointer-events-none blur-sm" />
+        </div>
       </div>
 
       {/* OpenAI Assistant Modal */}
