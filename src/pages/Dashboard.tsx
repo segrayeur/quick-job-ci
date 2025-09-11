@@ -29,10 +29,11 @@ import AuthGuard from "@/components/AuthGuard";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import CandidateApplications from "@/components/CandidateApplications";
 import AvailableJobs from "@/components/AvailableJobs";
-import RecruiterApplications from "@/components/RecruiterApplications";
 import CandidateDatabase from "@/components/CandidateDatabase";
+import RecruiterApplications from "@/components/RecruiterApplications";
 import RecruiterStats from "@/components/RecruiterStats";
-import NotificationCenter from "@/components/NotificationCenter";
+import RecruiterJobsManager from "@/components/RecruiterJobsManager";
+import NotificationSystem from "@/components/NotificationSystem";
 import { LocationSelector } from "@/components/LocationSelector";
 
 interface UserProfile {
@@ -55,6 +56,9 @@ interface UserProfile {
   applications_created_count: number;
   is_vip_candidate: boolean;
   vip_expiry_date?: string;
+  jobs_published?: number;
+  subscription_plan?: string;
+  subscription_end?: string;
 }
 
 interface Job {
@@ -513,7 +517,7 @@ const Dashboard = () => {
         case 'stats':
           return <RecruiterStats userProfile={userProfile} />;
         case 'notifications':
-          return <NotificationCenter userProfile={userProfile} />;
+          return <NotificationSystem userProfile={userProfile} />;
         case 'profile':
           return (
             <Card>

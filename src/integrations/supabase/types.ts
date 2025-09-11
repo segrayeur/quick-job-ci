@@ -261,6 +261,7 @@ export type Database = {
           amount: number
           applications_count: number | null
           category: string | null
+          commune: string | null
           company_name: string | null
           contact_phone: string | null
           contact_whatsapp: string | null
@@ -268,9 +269,12 @@ export type Database = {
           currency: string
           description: string
           district: string | null
+          end_date: string | null
           id: string
           location: string
+          quartier: string | null
           recruiter_id: string
+          start_date: string | null
           status: Database["public"]["Enums"]["job_status"]
           tenant_id: string | null
           title: string
@@ -281,6 +285,7 @@ export type Database = {
           amount: number
           applications_count?: number | null
           category?: string | null
+          commune?: string | null
           company_name?: string | null
           contact_phone?: string | null
           contact_whatsapp?: string | null
@@ -288,9 +293,12 @@ export type Database = {
           currency?: string
           description: string
           district?: string | null
+          end_date?: string | null
           id?: string
           location: string
+          quartier?: string | null
           recruiter_id: string
+          start_date?: string | null
           status?: Database["public"]["Enums"]["job_status"]
           tenant_id?: string | null
           title: string
@@ -301,6 +309,7 @@ export type Database = {
           amount?: number
           applications_count?: number | null
           category?: string | null
+          commune?: string | null
           company_name?: string | null
           contact_phone?: string | null
           contact_whatsapp?: string | null
@@ -308,9 +317,12 @@ export type Database = {
           currency?: string
           description?: string
           district?: string | null
+          end_date?: string | null
           id?: string
           location?: string
+          quartier?: string | null
           recruiter_id?: string
+          start_date?: string | null
           status?: Database["public"]["Enums"]["job_status"]
           tenant_id?: string | null
           title?: string
@@ -504,6 +516,7 @@ export type Database = {
           id: string
           is_verified: boolean | null
           is_vip_candidate: boolean | null
+          jobs_published: number | null
           last_name: string | null
           location: string | null
           phone: string | null
@@ -511,6 +524,8 @@ export type Database = {
           quartier: string | null
           role: Database["public"]["Enums"]["user_role"]
           skills: string[] | null
+          subscription_end: string | null
+          subscription_plan: string | null
           tenant_id: string | null
           updated_at: string
           user_id: string
@@ -529,6 +544,7 @@ export type Database = {
           id?: string
           is_verified?: boolean | null
           is_vip_candidate?: boolean | null
+          jobs_published?: number | null
           last_name?: string | null
           location?: string | null
           phone?: string | null
@@ -536,6 +552,8 @@ export type Database = {
           quartier?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           skills?: string[] | null
+          subscription_end?: string | null
+          subscription_plan?: string | null
           tenant_id?: string | null
           updated_at?: string
           user_id: string
@@ -554,6 +572,7 @@ export type Database = {
           id?: string
           is_verified?: boolean | null
           is_vip_candidate?: boolean | null
+          jobs_published?: number | null
           last_name?: string | null
           location?: string | null
           phone?: string | null
@@ -561,6 +580,8 @@ export type Database = {
           quartier?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           skills?: string[] | null
+          subscription_end?: string | null
+          subscription_plan?: string | null
           tenant_id?: string | null
           updated_at?: string
           user_id?: string
@@ -585,6 +606,15 @@ export type Database = {
       get_user_role: {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["user_role"]
+      }
+      send_notification: {
+        Args: {
+          p_message: string
+          p_title: string
+          p_type?: string
+          p_user_id: string
+        }
+        Returns: undefined
       }
     }
     Enums: {

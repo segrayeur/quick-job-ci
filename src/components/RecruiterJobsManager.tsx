@@ -340,14 +340,27 @@ const RecruiterJobsManager = ({ userProfile }: RecruiterJobsManagerProps) => {
                     </div>
                   </div>
 
-                  <LocationSelector 
-                    selectedLocation={newJob.location}
-                    selectedCommune={newJob.commune}
-                    selectedQuartier={newJob.quartier}
-                    onLocationChange={(location) => setNewJob({ ...newJob, location })}
-                    onCommuneChange={(commune) => setNewJob({ ...newJob, commune })}
-                    onQuartierChange={(quartier) => setNewJob({ ...newJob, quartier })}
-                  />
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="location">Ville *</Label>
+                      <Input
+                        id="location"
+                        value={newJob.location}
+                        onChange={(e) => setNewJob({ ...newJob, location: e.target.value })}
+                        placeholder="Ex: Abidjan"
+                      />
+                    </div>
+                    <div>
+                      <Label>Commune</Label>
+                      <LocationSelector 
+                        selectedCommune={newJob.commune}
+                        selectedQuartier={newJob.quartier}
+                        onCommuneChange={(commune) => setNewJob({ ...newJob, commune })}
+                        onQuartierChange={(quartier) => setNewJob({ ...newJob, quartier })}
+                        className="col-span-2"
+                      />
+                    </div>
+                  </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
