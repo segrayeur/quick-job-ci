@@ -28,8 +28,8 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <AuthEnforcer />
       <BrowserRouter>
+        <AuthEnforcer />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/publish" element={<PublishJob />} />
