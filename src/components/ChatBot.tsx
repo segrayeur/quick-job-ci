@@ -78,7 +78,7 @@ const ChatBot = () => {
   };
   return <>
       {/* Floating Chat Button */}
-      {!isOpen && <Button onClick={() => setIsOpen(true)} size="icon" className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-gradient-primary hover:opacity-90 shadow-elevated z-50 bg-zinc-950 hover:bg-zinc-800">
+      {!isOpen && <Button onClick={() => setIsOpen(true)} size="icon" className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-gradient-primary hover:opacity-90 shadow-elevated z-50 bg-orange-500 hover:bg-orange-400">
           <MessageCircle className="h-6 w-6 text-foreground" />
         </Button>}
 
