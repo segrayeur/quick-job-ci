@@ -68,10 +68,31 @@ const Connexion = () => {
 
       if (error) {
         if (error.message.includes('Invalid login credentials')) {
+          // Vérifier si l'utilisateur existe dans notre base de données
+          const { data: userExists } = await supabase
+            .from('users')
+            .select('email')
+            .eq('email', signInData.email)
+            .single();
+
+          if (!userExists) {
+            toast({
+              variant: "destructive",
+              title: "Compte inexistant",
+              description: "Aucun compte n'est associé à cette adresse email. Veuillez créer un compte d'abord.",
+            });
+          } else {
+            toast({
+              variant: "destructive",
+              title: "Mot de passe incorrect",
+              description: "Le mot de passe que vous avez saisi est incorrect.",
+            });
+          }
+        } else if (error.message.includes('Email not confirmed')) {
           toast({
             variant: "destructive",
-            title: "Identifiants incorrects",
-            description: "Vérifiez votre email et mot de passe",
+            title: "Email non confirmé",
+            description: "Veuillez confirmer votre email avant de vous connecter.",
           });
         } else {
           throw error;

@@ -95,8 +95,18 @@ const Index = () => {
     const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) || job.description.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesLocation && matchesSearch;
   }).map(formatJobForDisplay);
-  const handlePublishClick = () => {
-    navigate("/publish");
+  const handlePublishClick = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast({
+        title: "Connexion requise",
+        description: "Vous devez être connecté pour publier un job",
+        variant: "destructive"
+      });
+      navigate("/connexion");
+      return;
+    }
+    navigate("/dashboard?tab=jobs");
   };
   return <div className="min-h-screen bg-background">
       <Header />
@@ -147,8 +157,8 @@ const Index = () => {
               <div className="text-sm text-muted-foreground">Utilisateurs inscrits</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl md:text-3xl font-bold text-primary">95%</div>
-              <div className="text-sm text-muted-foreground">Satisfaction</div>
+              <div className="text-2xl md:text-3xl font-bold text-primary">24h</div>
+              <div className="text-sm text-muted-foreground">Réponse moyenne</div>
             </div>
             <div className="text-center">
               <div className="text-2xl md:text-3xl font-bold text-primary">{stats.totalDistricts}</div>

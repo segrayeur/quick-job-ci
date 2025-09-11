@@ -106,9 +106,36 @@ const Inscription = () => {
         return;
       }
 
+      // Créer le profil utilisateur dans notre table users
+      if (data.user) {
+        const { error: profileError } = await supabase
+          .from('users')
+          .insert([
+            {
+              user_id: data.user.id,
+              email: signUpData.email,
+              first_name: signUpData.firstName,
+              last_name: signUpData.lastName,
+              phone: signUpData.phone,
+              location: signUpData.location,
+              role: signUpData.role,
+              profile_complete: true
+            }
+          ]);
+
+        if (profileError) {
+          console.error('Error creating user profile:', profileError);
+          toast({
+            variant: "destructive",
+            title: "Erreur de profil",
+            description: "Le compte a été créé mais le profil n'a pas pu être initialisé.",
+          });
+        }
+      }
+
       toast({
         title: "Inscription réussie !",
-        description: "Vérifiez votre email pour confirmer votre compte. Vous pouvez maintenant vous connecter.",
+        description: `Votre compte ${signUpData.role === 'candidate' ? 'candidat' : 'recruteur'} a été créé avec succès. Vous pouvez maintenant vous connecter.`,
       });
 
       navigate("/connexion");
