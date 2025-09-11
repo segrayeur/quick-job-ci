@@ -72,12 +72,20 @@ const Connexion = () => {
 
       if (error) {
         console.error('Error fetching user role:', error);
-        navigate("/acces-non-autorise");
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Votre rôle n'est pas défini. Contactez l'administrateur.",
+        });
         return;
       }
 
       if (!userProfile || !userProfile.role) {
-        navigate("/acces-non-autorise");
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Votre rôle n'est pas défini. Contactez l'administrateur.",
+        });
         return;
       }
 
@@ -93,11 +101,19 @@ const Connexion = () => {
           navigate("/dashboard/admin");
           break;
         default:
-          navigate("/acces-non-autorise");
+          toast({
+            variant: "destructive",
+            title: "Erreur",
+            description: "Votre rôle n'est pas défini. Contactez l'administrateur.",
+          });
       }
     } catch (error) {
       console.error('Error during role-based redirect:', error);
-      navigate("/acces-non-autorise");
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la connexion.",
+      });
     }
   };
 

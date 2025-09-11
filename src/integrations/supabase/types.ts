@@ -607,6 +607,18 @@ export type Database = {
         Args: { job_id: string; user_uuid?: string }
         Returns: boolean
       }
+      create_user_profile: {
+        Args: {
+          first_name?: string
+          last_name?: string
+          location?: string
+          phone?: string
+          user_email: string
+          user_role: Database["public"]["Enums"]["user_role"]
+          user_uuid: string
+        }
+        Returns: string
+      }
       get_job_contact_info: {
         Args: { job_id: string }
         Returns: {

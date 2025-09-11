@@ -56,20 +56,32 @@ const Inscription = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (signUpData.password !== signUpData.confirmPassword) {
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Les mots de passe ne correspondent pas",
-      });
-      return;
-    }
-
+    
+    // Validation des champs obligatoires
     if (!signUpData.email || !signUpData.password || !signUpData.firstName || !signUpData.lastName) {
       toast({
         variant: "destructive",
         title: "Erreur",
         description: "Veuillez remplir tous les champs obligatoires",
+      });
+      return;
+    }
+
+    // Validation du rôle
+    if (!signUpData.role) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Veuillez sélectionner un rôle avant de continuer.",
+      });
+      return;
+    }
+
+    if (signUpData.password !== signUpData.confirmPassword) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Les mots de passe ne correspondent pas",
       });
       return;
     }
@@ -106,30 +118,36 @@ const Inscription = () => {
         return;
       }
 
-      // Créer le profil utilisateur dans notre table users
+      // Créer le profil utilisateur avec la fonction sécurisée
       if (data.user) {
-        const { error: profileError } = await supabase
-          .from('users')
-          .insert([
-            {
-              user_id: data.user.id,
-              email: signUpData.email,
-              first_name: signUpData.firstName,
-              last_name: signUpData.lastName,
-              phone: signUpData.phone,
-              location: signUpData.location,
-              role: signUpData.role,
-              profile_complete: true
-            }
-          ]);
+        try {
+          const { data: profileData, error: profileError } = await supabase.rpc('create_user_profile', {
+            user_uuid: data.user.id,
+            user_email: signUpData.email,
+            user_role: signUpData.role,
+            first_name: signUpData.firstName,
+            last_name: signUpData.lastName,
+            phone: signUpData.phone,
+            location: signUpData.location
+          });
 
-        if (profileError) {
-          console.error('Error creating user profile:', profileError);
+          if (profileError) {
+            console.error('Error creating user profile:', profileError);
+            toast({
+              variant: "destructive",
+              title: "Erreur de profil",
+              description: "Le compte a été créé mais le profil n'a pas pu être initialisé.",
+            });
+            return;
+          }
+        } catch (error) {
+          console.error('Profile creation error:', error);
           toast({
             variant: "destructive",
             title: "Erreur de profil",
-            description: "Le compte a été créé mais le profil n'a pas pu être initialisé.",
+            description: "Une erreur est survenue lors de la création du profil.",
           });
+          return;
         }
       }
 
