@@ -5,21 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
-import { 
-  Search, 
-  MapPin, 
-  DollarSign, 
-  Briefcase, 
-  Clock,
-  ArrowLeft,
-  Filter,
-  Star
-} from "lucide-react";
+import { Search, MapPin, DollarSign, Briefcase, Clock, ArrowLeft, Filter, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-
 interface Job {
   id: string;
   title: string;
@@ -30,20 +20,13 @@ interface Job {
   category: string | null;
   created_at: string;
 }
-
-const locations = [
-  "Tous", "Abidjan", "Cocody", "Yopougon", "Adjamé", "Marcory", 
-  "Plateau", "Treichville", "Koumassi", "Port-Bouët", "Abobo"
-];
-
-const categories = [
-  "Tous", "Déménagement", "Soutien scolaire", "Livraison", "Commerce", 
-  "Ménage", "Enseignement", "Informatique", "Santé", "Restauration", "Autres"
-];
-
+const locations = ["Tous", "Abidjan", "Cocody", "Yopougon", "Adjamé", "Marcory", "Plateau", "Treichville", "Koumassi", "Port-Bouët", "Abobo"];
+const categories = ["Tous", "Déménagement", "Soutien scolaire", "Livraison", "Commerce", "Ménage", "Enseignement", "Informatique", "Santé", "Restauration", "Autres"];
 const TrouverUnJob = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("Tous");
   const [selectedCategory, setSelectedCategory] = useState("Tous");
@@ -54,19 +37,17 @@ const TrouverUnJob = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const itemsPerPage = 6;
-
   useEffect(() => {
     fetchJobs();
   }, []);
-
   const fetchJobs = async () => {
     try {
-      const { data, error } = await supabase
-        .from('jobs')
-        .select('*')
-        .eq('status', 'open')
-        .order('created_at', { ascending: false });
-
+      const {
+        data,
+        error
+      } = await supabase.from('jobs').select('*').eq('status', 'open').order('created_at', {
+        ascending: false
+      });
       if (error) throw error;
       setJobs(data || []);
     } catch (error) {
@@ -83,12 +64,10 @@ const TrouverUnJob = () => {
 
   // Filtrage des emplois
   const filteredJobs = jobs.filter(job => {
-    const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         job.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) || job.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesLocation = selectedLocation === "Tous" || job.location === selectedLocation;
     const matchesCategory = selectedCategory === "Tous" || job.category === selectedCategory;
     const matchesSalary = salaryRange[0] === 0 || job.amount >= salaryRange[0] * 1000;
-    
     return matchesSearch && matchesLocation && matchesCategory && matchesSalary;
   });
 
@@ -105,19 +84,18 @@ const TrouverUnJob = () => {
 
   // Pagination
   const totalPages = Math.ceil(sortedJobs.length / itemsPerPage);
-  const paginatedJobs = sortedJobs.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
+  const paginatedJobs = sortedJobs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const formatSalary = (amount: number, currency: string) => {
     return `${amount.toLocaleString()} ${currency}`;
   };
-
   const handleViewMore = (jobId: string) => {
     // Check if user is authenticated
     const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: {
+          session
+        }
+      } = await supabase.auth.getSession();
       if (!session) {
         toast({
           title: "Connexion requise",
@@ -127,16 +105,17 @@ const TrouverUnJob = () => {
         navigate("/connexion");
         return;
       }
-      
+
       // Redirect to dashboard job details
       navigate(`/dashboard?view=job&id=${jobId}`);
     };
-    
     checkAuth();
   };
-
-  const JobCard = ({ job }: { job: Job }) => (
-    <Card className="hover:shadow-elevated transition-shadow cursor-pointer">
+  const JobCard = ({
+    job
+  }: {
+    job: Job;
+  }) => <Card className="hover:shadow-elevated transition-shadow cursor-pointer">
       <CardHeader>
         <div className="flex justify-between items-start">
           <div className="flex-1">
@@ -170,32 +149,21 @@ const TrouverUnJob = () => {
           {job.category && <Badge variant="outline">{job.category}</Badge>}
           
           <div className="pt-2">
-            <Button 
-              size="sm" 
-              className="w-full bg-gradient-primary hover:opacity-90 transition-opacity"
-              onClick={() => handleViewMore(job.id)}
-            >
+            <Button size="sm" className="w-full bg-gradient-primary hover:opacity-90 transition-opacity" onClick={() => handleViewMore(job.id)}>
               Voir plus d'informations
             </Button>
           </div>
         </div>
       </CardContent>
-    </Card>
-  );
-
-  return (
-    <div className="min-h-screen bg-background">
+    </Card>;
+  return <div className="min-h-screen bg-background">
       <Header />
       
       {/* Header de recherche */}
       <section className="bg-gradient-hero text-white py-8">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 bg-orange-500">
           <div className="mb-6">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate("/")}
-              className="text-white hover:bg-white/10"
-            >
+            <Button variant="ghost" onClick={() => navigate("/")} className="text-white bg-gray-950 hover:bg-gray-800">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Retour à l'accueil
             </Button>
@@ -215,18 +183,9 @@ const TrouverUnJob = () => {
             <div className="flex flex-col md:flex-row gap-4">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                <Input
-                  placeholder="Rechercher par titre, entreprise ou mot-clé..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 py-3 text-black bg-white"
-                />
+                <Input placeholder="Rechercher par titre, entreprise ou mot-clé..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 py-3 text-black bg-white" />
               </div>
-              <Button
-                onClick={() => setShowFilters(!showFilters)}
-                variant="outline"
-                className="bg-white text-primary hover:bg-white/90"
-              >
+              <Button onClick={() => setShowFilters(!showFilters)} variant="outline" className="bg-white text-primary hover:bg-white/90">
                 <Filter className="h-4 w-4 mr-2" />
                 Filtres
               </Button>
@@ -236,8 +195,7 @@ const TrouverUnJob = () => {
       </section>
 
       {/* Filtres */}
-      {showFilters && (
-        <section className="bg-accent/30 py-6 border-b">
+      {showFilters && <section className="bg-accent/30 py-6 border-b">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
@@ -247,11 +205,9 @@ const TrouverUnJob = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {locations.map((location) => (
-                      <SelectItem key={location} value={location}>
+                    {locations.map(location => <SelectItem key={location} value={location}>
                         {location}
-                      </SelectItem>
-                    ))}
+                      </SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -263,11 +219,9 @@ const TrouverUnJob = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
+                    {categories.map(category => <SelectItem key={category} value={category}>
                         {category}
-                      </SelectItem>
-                    ))}
+                      </SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -277,13 +231,7 @@ const TrouverUnJob = () => {
                 <label className="text-sm font-medium mb-2 block">
                   Salaire minimum: {salaryRange[0] * 1000} FCFA
                 </label>
-                <Slider
-                  value={salaryRange}
-                  onValueChange={setSalaryRange}
-                  max={500}
-                  step={10}
-                  className="mt-2"
-                />
+                <Slider value={salaryRange} onValueChange={setSalaryRange} max={500} step={10} className="mt-2" />
               </div>
             </div>
             
@@ -301,22 +249,18 @@ const TrouverUnJob = () => {
                 </Select>
               </div>
               
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setSearchTerm("");
-                  setSelectedLocation("Tous");
-                  setSelectedCategory("Tous");
-                  setSalaryRange([0]);
-                  setCurrentPage(1);
-                }}
-              >
+              <Button variant="outline" onClick={() => {
+            setSearchTerm("");
+            setSelectedLocation("Tous");
+            setSelectedCategory("Tous");
+            setSalaryRange([0]);
+            setCurrentPage(1);
+          }}>
                 Réinitialiser
               </Button>
             </div>
           </div>
-        </section>
-      )}
+        </section>}
 
       {/* Résultats */}
       <main className="py-8">
@@ -328,54 +272,31 @@ const TrouverUnJob = () => {
             </h2>
           </div>
 
-          {loading ? (
-            <div className="text-center py-12">
+          {loading ? <div className="text-center py-12">
               <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
                 <Briefcase className="h-8 w-8 text-muted-foreground animate-pulse" />
               </div>
               <p className="text-muted-foreground">Chargement des offres...</p>
-            </div>
-          ) : paginatedJobs.length > 0 ? (
-            <>
+            </div> : paginatedJobs.length > 0 ? <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                {paginatedJobs.map((job) => (
-                  <JobCard key={job.id} job={job} />
-                ))}
+                {paginatedJobs.map(job => <JobCard key={job.id} job={job} />)}
               </div>
               
               {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex justify-center space-x-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                    disabled={currentPage === 1}
-                  >
+              {totalPages > 1 && <div className="flex justify-center space-x-2">
+                  <Button variant="outline" onClick={() => setCurrentPage(Math.max(1, currentPage - 1))} disabled={currentPage === 1}>
                     Précédent
                   </Button>
                   
-                  {[...Array(totalPages)].map((_, i) => (
-                    <Button
-                      key={i + 1}
-                      variant={currentPage === i + 1 ? "default" : "outline"}
-                      onClick={() => setCurrentPage(i + 1)}
-                    >
+                  {[...Array(totalPages)].map((_, i) => <Button key={i + 1} variant={currentPage === i + 1 ? "default" : "outline"} onClick={() => setCurrentPage(i + 1)}>
                       {i + 1}
-                    </Button>
-                  ))}
+                    </Button>)}
                   
-                  <Button
-                    variant="outline"
-                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                    disabled={currentPage === totalPages}
-                  >
+                  <Button variant="outline" onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages}>
                     Suivant
                   </Button>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="text-center py-12">
+                </div>}
+            </> : <div className="text-center py-12">
               <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="h-8 w-8 text-muted-foreground" />
               </div>
@@ -388,12 +309,9 @@ const TrouverUnJob = () => {
               <Button onClick={() => navigate("/")}>
                 Retour à l'accueil
               </Button>
-            </div>
-          )}
+            </div>}
         </div>
       </main>
-    </div>
-  );
+    </div>;
 };
-
 export default TrouverUnJob;
