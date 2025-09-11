@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, X, MapPin, Plus, User, LogIn, Briefcase, Home, Phone, Info } from "lucide-react";
+import { Menu, X, MapPin, Plus, User, LogIn, Briefcase, Home, Phone, Info, Users, HelpCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 
@@ -18,6 +19,20 @@ const MobileMenu = ({ user }: MobileMenuProps) => {
     setOpen(false);
   };
 
+  const handlePublishClick = () => {
+    if (user) {
+      navigate("/publish");
+    } else {
+      navigate("/connexion");
+    }
+    setOpen(false);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setOpen(false);
+  };
+
   const menuItems = [
     {
       icon: Home,
@@ -25,14 +40,19 @@ const MobileMenu = ({ user }: MobileMenuProps) => {
       path: "/",
     },
     {
+      icon: HelpCircle,
+      label: "FAQ",
+      path: "/faq",
+    },
+    {
+      icon: Users,
+      label: "Trouver un candidat",
+      path: "/trouver-un-candidat",
+    },
+    {
       icon: Briefcase,
       label: "Trouver un job",
       path: "/trouver-un-job",
-    },
-    {
-      icon: Plus,
-      label: "Publier un job",
-      path: "/publish",
     },
     ...(user ? [
       {
@@ -93,6 +113,16 @@ const MobileMenu = ({ user }: MobileMenuProps) => {
               {item.label}
             </Button>
           ))}
+          
+          {/* Publier button with conditional logic */}
+          <Button
+            variant="ghost"
+            className="w-full justify-start h-12"
+            onClick={handlePublishClick}
+          >
+            <Plus className="h-5 w-5 mr-3" />
+            Publier un job
+          </Button>
         </div>
 
         {user && (
@@ -103,10 +133,7 @@ const MobileMenu = ({ user }: MobileMenuProps) => {
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => {
-                // TODO: Implement logout
-                setOpen(false);
-              }}
+              onClick={handleLogout}
             >
               Se déconnecter
             </Button>

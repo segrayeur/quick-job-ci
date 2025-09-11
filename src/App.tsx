@@ -15,6 +15,7 @@ import Inscription from "./pages/Inscription";
 import Connexion from "./pages/Connexion";
 import TrouverUnJob from "./pages/TrouverUnJob";
 import TrouverUnCandidat from "./pages/TrouverUnCandidat";
+import FAQ from "./pages/FAQ";
 import AuthEnforcer from "./components/AuthEnforcer";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/connexion" element={<Connexion />} />
           <Route path="/trouver-un-job" element={<TrouverUnJob />} />
           <Route path="/trouver-un-candidat" element={<TrouverUnCandidat />} />
+          <Route path="/faq" element={<FAQ />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />

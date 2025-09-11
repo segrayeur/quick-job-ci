@@ -28,7 +28,11 @@ const Header = () => {
   }, []);
 
   const handlePublishClick = () => {
-    navigate("/publish");
+    if (user) {
+      navigate("/publish");
+    } else {
+      navigate("/connexion");
+    }
   };
 
   const handleLogoClick = () => {
@@ -60,6 +64,30 @@ const Header = () => {
           </div>
           
           <div className="flex items-center space-x-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="hidden md:flex"
+              onClick={() => navigate("/")}
+            >
+              Accueil
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="hidden md:flex"
+              onClick={() => navigate("/faq")}
+            >
+              FAQ
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="hidden md:flex"
+              onClick={() => navigate("/trouver-un-candidat")}
+            >
+              Trouver un candidat
+            </Button>
             <Button 
               variant="ghost" 
               size="sm" 
