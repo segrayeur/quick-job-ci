@@ -15,6 +15,7 @@ import Inscription from "./pages/Inscription";
 import Connexion from "./pages/Connexion";
 import TrouverUnJob from "./pages/TrouverUnJob";
 import TrouverUnCandidat from "./pages/TrouverUnCandidat";
+import AuthEnforcer from "./components/AuthEnforcer";
 
 const queryClient = new QueryClient();
 

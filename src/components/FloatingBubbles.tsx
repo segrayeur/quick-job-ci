@@ -99,7 +99,7 @@ const FloatingBubbles = () => {
               </div>
               
               {/* Enhanced tooltip */}
-              <div className="absolute bottom-14 left-1/2 -translate-x-1/2 glass-effect text-white text-sm px-3 py-2 rounded-lg whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-300 z-10 shadow-cosmic border border-primary-glow/30">
+              <div className="absolute bottom-14 left-1/2 -translate-x-1/2 glass-effect text-foreground text-sm px-3 py-2 rounded-lg whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-300 z-10 shadow-cosmic border border-primary-glow/30">
                 {bubble.label}
                 <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-primary-glow/50"></div>
               </div>

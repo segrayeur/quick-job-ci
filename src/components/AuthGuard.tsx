@@ -10,7 +10,7 @@ interface AuthGuardProps {
   redirectTo?: string;
 }
 
-const AuthGuard = ({ children, requiredRole, redirectTo = "/auth" }: AuthGuardProps) => {
+const AuthGuard = ({ children, requiredRole, redirectTo = "/" }: AuthGuardProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [userProfile, setUserProfile] = useState<any>(null);

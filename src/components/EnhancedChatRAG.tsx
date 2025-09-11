@@ -129,7 +129,7 @@ const EnhancedChatRAG = ({ isOpen, onToggle }: EnhancedChatRAGProps) => {
       )}>
         <CardHeader className="p-4 border-b border-primary-glow/20">
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-white">
+            <CardTitle className="flex items-center gap-2 text-foreground">
               <div className="relative">
                 <Bot className="h-5 w-5 text-secondary-glow animate-pulse" />
                 <div className="absolute -inset-1 bg-secondary-glow/20 rounded-full animate-ping" />
@@ -141,7 +141,7 @@ const EnhancedChatRAG = ({ isOpen, onToggle }: EnhancedChatRAGProps) => {
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsMinimized(!isMinimized)}
-                className="h-8 w-8 p-0 text-white/70 hover:text-white hover:bg-white/10"
+                className="h-8 w-8 p-0 text-foreground/70 hover:text-foreground hover:bg-foreground/10"
               >
                 {isMinimized ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
               </Button>
@@ -149,7 +149,7 @@ const EnhancedChatRAG = ({ isOpen, onToggle }: EnhancedChatRAGProps) => {
                 variant="ghost"
                 size="sm"
                 onClick={onToggle}
-                className="h-8 w-8 p-0 text-white/70 hover:text-white hover:bg-white/10"
+                className="h-8 w-8 p-0 text-foreground/70 hover:text-foreground hover:bg-foreground/10"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -184,12 +184,12 @@ const EnhancedChatRAG = ({ isOpen, onToggle }: EnhancedChatRAGProps) => {
                     <div className={cn(
                       "max-w-[70%] rounded-lg p-3 glass-effect border",
                       message.role === 'user'
-                        ? 'bg-gradient-primary/20 border-primary-glow/30 text-white'
-                        : 'bg-gradient-secondary/20 border-secondary-glow/30 text-white',
+                        ? 'bg-gradient-primary/20 border-primary-glow/30 text-foreground'
+                        : 'bg-gradient-secondary/20 border-secondary-glow/30 text-foreground',
                       "shadow-cosmic animate-slide-in-left"
                     )}>
                       <p className="text-sm leading-relaxed">{message.content}</p>
-                      <span className="text-xs text-white/50 mt-2 block">
+                      <span className="text-xs text-muted-foreground mt-2 block">
                         {message.timestamp.toLocaleTimeString()}
                       </span>
                     </div>
@@ -217,10 +217,10 @@ const EnhancedChatRAG = ({ isOpen, onToggle }: EnhancedChatRAGProps) => {
                 <Input
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  onKeyPress={handleKeyPress}
+                  onKeyDown={handleKeyPress}
                   placeholder="Tapez votre message..."
                   disabled={isLoading}
-                  className="flex-1 glass-effect border-primary-glow/30 text-white placeholder:text-white/50 focus:border-primary-glow focus:ring-primary-glow/20"
+                  className="flex-1 glass-effect border-primary-glow/30 text-foreground placeholder:text-muted-foreground focus:border-primary-glow focus:ring-primary-glow/20"
                 />
                 <Button
                   onClick={sendMessage}
