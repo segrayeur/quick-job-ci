@@ -136,7 +136,7 @@ const SimpleProfile = ({ userProfile, onProfileUpdate }: SimpleProfileProps) => 
           </div>
         </CardHeader>
         <CardContent>
-          <div className="text-sm text-muted-foreground space-y-1">
+          <div className="text-sm text-foreground/70 space-y-1">
             <p>{subInfo.description}</p>
             {userProfile.role === 'candidate' && (
               <p>Candidatures utilisées: {userProfile.applications_created_count}</p>
