@@ -43,7 +43,7 @@ const TrouverUnJob = () => {
   const fetchJobs = async () => {
     try {
       // Use secure function to get jobs without contact information
-      const { data, error } = await supabase.rpc('get_jobs_public');
+      const { data, error } = await supabase.rpc('get_public_jobs');
       if (error) throw error;
       setJobs(data || []);
     } catch (error) {

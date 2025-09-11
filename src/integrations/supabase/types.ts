@@ -614,7 +614,57 @@ export type Database = {
           contact_whatsapp: string
         }[]
       }
+      get_job_with_contact: {
+        Args: { job_id: string }
+        Returns: {
+          amount: number
+          applications_count: number
+          category: string
+          commune: string
+          company_name: string
+          contact_phone: string
+          contact_whatsapp: string
+          created_at: string
+          currency: string
+          description: string
+          district: string
+          end_date: string
+          id: string
+          location: string
+          quartier: string
+          recruiter_id: string
+          start_date: string
+          status: Database["public"]["Enums"]["job_status"]
+          title: string
+          updated_at: string
+          views_count: number
+        }[]
+      }
       get_jobs_public: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          amount: number
+          applications_count: number
+          category: string
+          commune: string
+          company_name: string
+          created_at: string
+          currency: string
+          description: string
+          district: string
+          end_date: string
+          id: string
+          location: string
+          quartier: string
+          recruiter_id: string
+          start_date: string
+          status: Database["public"]["Enums"]["job_status"]
+          title: string
+          updated_at: string
+          views_count: number
+        }[]
+      }
+      get_public_jobs: {
         Args: Record<PropertyKey, never>
         Returns: {
           amount: number
