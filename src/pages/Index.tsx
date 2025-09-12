@@ -40,14 +40,9 @@ const Index = () => {
   }, []);
   const fetchRecentJobs = async () => {
     try {
-      const {
-        data,
-        error
-      } = await supabase.from('jobs').select('*').eq('status', 'open').order('created_at', {
-        ascending: false
-      }).limit(15);
+      const { data, error } = await supabase.rpc('get_public_jobs');
       if (error) throw error;
-      setJobs(data || []);
+      setJobs((data as any) || []);
     } catch (error) {
       console.error('Error fetching jobs:', error);
       toast({
@@ -61,19 +56,18 @@ const Index = () => {
   };
   const fetchStats = async () => {
     try {
-      const [{
-        count: jobsCount
-      }, {
-        count: usersCount
-      }] = await Promise.all([supabase.from('jobs').select('*', {
-        count: 'exact',
-        head: true
-      }), supabase.from('users').select('*', {
-        count: 'exact',
-        head: true
-      })]);
+      const [
+        { data: jobsData, error: jobsError },
+        { count: usersCount }
+      ] = await Promise.all([
+        supabase.rpc('get_public_jobs'),
+        supabase.from('users').select('*', { count: 'exact', head: true })
+      ]);
+
+      if (jobsError) throw jobsError;
+
       setStats({
-        totalJobs: jobsCount || 0,
+        totalJobs: (jobsData as any)?.length || 0,
         totalUsers: usersCount || 0,
         totalDistricts: 11
       });
@@ -121,11 +115,11 @@ const Index = () => {
               <Briefcase className="mr-2 h-5 w-5" />
               Trouver un job
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate("/trouver-un-candidat")} className="flex-1 border-white transition-colors text-slate-50 bg-zinc-950 hover:bg-zinc-800">
+            <Button size="lg" variant="outline" onClick={() => navigate("/trouver-un-candidat")} className="flex-1 border-white transition-colors">
               <Users className="mr-2 h-5 w-5" />
               Trouver un candidat
             </Button>
-            <Button size="lg" variant="outline" onClick={handlePublishClick} className="flex-1 border-white text-white hover:text-primary transition-colors bg-green-950 hover:bg-green-800">
+            <Button size="lg" variant="outline" onClick={handlePublishClick} className="flex-1 border-white">
               <TrendingUp className="mr-2 h-5 w-5" />
               Publier un job
             </Button>
@@ -133,10 +127,10 @@ const Index = () => {
           
           {/* Call-to-action pour nouveaux utilisateurs */}
           <div className="mt-6 text-center">
-            <p className="text-white/80 mb-4">
+            <p className="opacity-90 mb-4">
               Nouveau sur QuickJob CI ?
             </p>
-            <Button size="lg" variant="secondary" onClick={() => navigate("/auth")} className="bg-white/10 text-white border border-white/20 hover:bg-white/20">
+            <Button size="lg" variant="secondary" onClick={() => navigate("/connexion")}>
               <Users className="mr-2 h-5 w-5" />
               Créer un compte gratuit
             </Button>

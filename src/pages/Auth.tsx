@@ -256,6 +256,35 @@ const Auth = () => {
           description: "Vous êtes maintenant connecté.",
         });
         
+        // S'assurer qu'un profil existe pour cet utilisateur (gère admin et existants)
+        try {
+          const { data: existing } = await supabase
+            .from('users')
+            .select('id, role')
+            .eq('user_id', data.user.id)
+            .maybeSingle();
+
+          if (!existing) {
+            const assignedRole = (data.user.email?.toLowerCase() === 'admin@quickjobci.com') ? 'admin' : 'candidate';
+
+            const { error: profileCreateError } = await supabase.rpc('create_user_profile', {
+              user_uuid: data.user.id,
+              user_email: data.user.email || email,
+              user_role: assignedRole,
+              first_name: null,
+              last_name: null,
+              phone: null,
+              location: null
+            });
+
+            if (profileCreateError) {
+              console.error('Profile creation error on login:', profileCreateError);
+            }
+          }
+        } catch (e) {
+          console.error('Ensure profile error:', e);
+        }
+        
         redirectBasedOnRole(data.user.id);
       }
     } catch (error: any) {
