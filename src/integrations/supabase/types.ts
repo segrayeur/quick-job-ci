@@ -182,6 +182,10 @@ export type Database = {
         }
         Returns: string
       }
+      get_email_by_phone: {
+        Args: { phone_input: string }
+        Returns: string
+      }
       get_job_contact_info: {
         Args: { job_id: string }
         Returns: {

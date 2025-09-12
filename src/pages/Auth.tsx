@@ -216,13 +216,21 @@ const Auth = () => {
       if (!isValidEmail(signInData.emailOrPhone) && isValidPhone(signInData.emailOrPhone)) {
         const phoneToSearch = signInData.emailOrPhone.replace(/\s/g, '');
         
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('email')
-          .eq('phone', phoneToSearch)
-          .single();
+        const { data: foundEmail, error: emailError } = await supabase
+          .rpc('get_email_by_phone', { phone_input: phoneToSearch });
 
-        if (userError || !userData) {
+        if (emailError) {
+          console.error('Erreur lors de la recherche par téléphone:', emailError);
+          toast({
+            title: "Erreur",
+            description: "Erreur technique lors de la recherche. Réessayez.",
+            variant: "destructive"
+          });
+          setLoading(false);
+          return;
+        }
+
+        if (!foundEmail) {
           toast({
             title: "Erreur",
             description: "Aucun compte trouvé avec ce numéro de téléphone",
@@ -232,7 +240,7 @@ const Auth = () => {
           return;
         }
 
-        email = userData.email;
+        email = foundEmail;
       }
 
       const { data, error } = await supabase.auth.signInWithPassword({

@@ -46,7 +46,7 @@ const AuthEnforcer = () => {
         }
       } else if (path.startsWith('/dashboard')) {
         toast({ title: 'Session expirée', description: 'Votre session a expiré. Veuillez vous reconnecter.' });
-        navigate('/login', { replace: true });
+        navigate('/connexion', { replace: true });
       }
     };
 
@@ -60,7 +60,7 @@ const AuthEnforcer = () => {
         }, 0);
       } else if (event === 'SIGNED_OUT') {
         toast({ title: 'Session expirée', description: 'Votre session a expiré. Veuillez vous reconnecter.' });
-        navigate('/login', { replace: true });
+        navigate('/connexion', { replace: true });
       }
     });
 
