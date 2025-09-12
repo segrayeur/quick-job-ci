@@ -29,7 +29,7 @@ const Auth = () => {
   });
 
   const [signInData, setSignInData] = useState({
-    email: "",
+    emailOrPhone: "",
     password: "",
   });
 
@@ -185,11 +185,20 @@ const Auth = () => {
     }
   };
 
+  const isValidEmail = (input: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input);
+  };
+
+  const isValidPhone = (input: string) => {
+    // Accepte différents formats de numéros ivoiriens
+    return /^(\+225|225)?[\s-]?[0-9\s-]{8,10}$/.test(input.replace(/\s/g, ''));
+  };
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loading) return;
 
-    if (!signInData.email || !signInData.password) {
+    if (!signInData.emailOrPhone || !signInData.password) {
       toast({
         title: "Erreur",
         description: "Veuillez remplir tous les champs",
@@ -201,8 +210,33 @@ const Auth = () => {
     setLoading(true);
 
     try {
+      let email = signInData.emailOrPhone;
+
+      // Si c'est un numéro de téléphone, chercher l'email associé
+      if (!isValidEmail(signInData.emailOrPhone) && isValidPhone(signInData.emailOrPhone)) {
+        const phoneToSearch = signInData.emailOrPhone.replace(/\s/g, '');
+        
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('email')
+          .eq('phone', phoneToSearch)
+          .single();
+
+        if (userError || !userData) {
+          toast({
+            title: "Erreur",
+            description: "Aucun compte trouvé avec ce numéro de téléphone",
+            variant: "destructive"
+          });
+          setLoading(false);
+          return;
+        }
+
+        email = userData.email;
+      }
+
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: signInData.email,
+        email: email,
         password: signInData.password,
       });
 
@@ -268,13 +302,13 @@ const Auth = () => {
               <TabsContent value="signin" className="space-y-4">
                 <form onSubmit={handleSignIn} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="signin-email">Email</Label>
+                    <Label htmlFor="signin-emailOrPhone">Email ou téléphone</Label>
                     <Input
-                      id="signin-email"
-                      type="email"
-                      placeholder="votre@email.com"
-                      value={signInData.email}
-                      onChange={(e) => handleSignInInputChange("email", e.target.value)}
+                      id="signin-emailOrPhone"
+                      type="text"
+                      placeholder="votre@email.com ou +225XXXXXXXX"
+                      value={signInData.emailOrPhone}
+                      onChange={(e) => handleSignInInputChange("emailOrPhone", e.target.value)}
                       required
                     />
                   </div>
