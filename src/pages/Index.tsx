@@ -103,7 +103,7 @@ const Index = () => {
         description: "Vous devez être connecté pour publier un job",
         variant: "destructive"
       });
-      navigate("/connexion");
+      navigate("/auth");
       return;
     }
     navigate("/dashboard?tab=jobs");
@@ -136,7 +136,7 @@ const Index = () => {
             <p className="text-white/80 mb-4">
               Nouveau sur QuickJob CI ?
             </p>
-            <Button size="lg" variant="secondary" onClick={() => navigate("/inscription")} className="bg-white/10 text-white border border-white/20 hover:bg-white/20">
+            <Button size="lg" variant="secondary" onClick={() => navigate("/auth")} className="bg-white/10 text-white border border-white/20 hover:bg-white/20">
               <Users className="mr-2 h-5 w-5" />
               Créer un compte gratuit
             </Button>
@@ -180,7 +180,7 @@ const Index = () => {
               <Users className="mr-2 h-5 w-5" />
               Trouver un candidat
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate("/inscription")}>
+            <Button size="lg" variant="outline" onClick={() => navigate("/auth")}>
               <Users className="mr-2 h-5 w-5" />
               Créer mon compte
             </Button>
@@ -232,7 +232,7 @@ const Index = () => {
                 description: "Vous devez être connecté pour voir les détails complets du job",
                 variant: "destructive"
               });
-              navigate("/connexion");
+              navigate("/auth");
               return;
             }
             navigate(`/dashboard?view=job&id=${job.id}`);

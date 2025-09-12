@@ -14,8 +14,6 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
-import Inscription from "./pages/Inscription";
-import Connexion from "./pages/Connexion";
 import TrouverUnJob from "./pages/TrouverUnJob";
 import TrouverUnCandidat from "./pages/TrouverUnCandidat";
 import FAQ from "./pages/FAQ";
@@ -34,9 +32,6 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/publish" element={<PublishJob />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/inscription" element={<Inscription />} />
-          <Route path="/connexion" element={<Connexion />} />
-          <Route path="/login" element={<Connexion />} />
           <Route path="/trouver-un-job" element={<TrouverUnJob />} />
           <Route path="/trouver-un-candidat" element={<TrouverUnCandidat />} />
           <Route path="/faq" element={<FAQ />} />
