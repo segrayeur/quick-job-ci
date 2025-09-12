@@ -108,7 +108,30 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
     }
   ];
 
-  const items = userRole === 'candidate' ? candidateItems : recruiterItems;
+  const adminItems = [
+    {
+      title: "Créer un candidat",
+      url: "/dashboard?tab=admin-create",
+      icon: User,
+    },
+    {
+      title: "Réinit. mot de passe",
+      url: "/dashboard?tab=admin-reset",
+      icon: FileText,
+    },
+    {
+      title: "Supprimer un compte",
+      url: "/dashboard?tab=admin-delete",
+      icon: Star,
+    },
+    {
+      title: "Notifications",
+      url: "/dashboard?tab=notifications",
+      icon: Bell,
+    },
+  ];
+
+  const items = userRole === 'candidate' ? candidateItems : userRole === 'recruiter' ? recruiterItems : adminItems;
 
   const isActive = (path: string) => {
     if (path === "/dashboard" && currentPath === "/dashboard") return true;
@@ -125,7 +148,7 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
       <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
         {state === "expanded" && (
           <h2 className="text-lg font-semibold text-sidebar-foreground">
-            {userRole === 'candidate' ? 'Espace Candidat' : 'Espace Recruteur'}
+            {userRole === 'candidate' ? 'Espace Candidat' : userRole === 'recruiter' ? 'Espace Recruteur' : 'Espace Admin'}
           </h2>
         )}
         <SidebarTrigger />

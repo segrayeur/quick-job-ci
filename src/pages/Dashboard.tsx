@@ -15,6 +15,9 @@ import RecruiterSubscriptionManager from "@/components/RecruiterSubscriptionMana
 import NotificationSystem from "@/components/NotificationSystem";
 import CrossNotificationSystem from "@/components/CrossNotificationSystem";
 import EnhancedChatRAG from "@/components/EnhancedChatRAG";
+import AdminCreateCandidate from "@/components/admin/AdminCreateCandidate";
+import AdminPasswordReset from "@/components/admin/AdminPasswordReset";
+import AdminDeleteAccount from "@/components/admin/AdminDeleteAccount";
 
 interface UserProfile {
   id: string;
@@ -161,6 +164,18 @@ const Dashboard = () => {
                   {activeTab === 'subscription' && userProfile?.role === 'recruiter' && (
                     <RecruiterSubscriptionManager userProfile={userProfile} onUpgrade={refreshProfile} />
                   )}
+
+                  {/* Admin tools */}
+                  {userProfile?.role === 'admin' && activeTab === 'admin-create' && (
+                    <AdminCreateCandidate />
+                  )}
+                  {userProfile?.role === 'admin' && activeTab === 'admin-reset' && (
+                    <AdminPasswordReset />
+                  )}
+                  {userProfile?.role === 'admin' && activeTab === 'admin-delete' && (
+                    <AdminDeleteAccount />
+                  )}
+
                   {activeTab === 'notifications' && (
                     <NotificationSystem userProfile={userProfile} />
                   )}
