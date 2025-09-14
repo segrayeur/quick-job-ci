@@ -1,101 +1,93 @@
 import { useEffect, useState, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { User, Session } from "@supabase/supabase-js";
+import { User } from "@supabase/supabase-js";
 import { Loader2 } from "lucide-react";
 
 interface AuthGuardProps {
   children: ReactNode;
-  requiredRole?: 'admin' | 'recruiter' | 'candidate';
-  redirectTo?: string;
+  requiredRole: 'admin' | 'recruiter' | 'candidate';
 }
 
-const AuthGuard = ({ children, requiredRole, redirectTo = "/" }: AuthGuardProps) => {
+const AuthGuard = ({ children, requiredRole }: AuthGuardProps) => {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [userProfile, setUserProfile] = useState<any>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.id);
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          // Fetch user profile
-          const { data: profile } = await supabase
-            .from('users')
-            .select('*')
-            .eq('user_id', session.user.id)
-            .maybeSingle();
-          
-          setUserProfile(profile);
-        } else {
-          setUserProfile(null);
-        }
-        
-        setLoading(false);
-      }
-    );
+    const checkUser = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
 
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+      if (error || !session) {
+        navigate("/connexion");
+        return;
+      }
+
+      setUser(session.user);
+
+      const { data: profile, error: profileError } = await supabase
+        .from('users')
+        .select('role')
+        .eq('user_id', session.user.id)
+        .single();
+
+      if (profileError || !profile) {
+        console.error("Error fetching profile or profile doesn't exist:", profileError);
+        navigate("/acces-non-autorise");
+        return;
+      }
+
+      setUserRole(profile.role);
       
-      if (session?.user) {
-        supabase
-          .from('users')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .maybeSingle()
-          .then(({ data: profile }) => {
-            setUserProfile(profile);
-            setLoading(false);
-          });
-      } else {
-        setLoading(false);
+      if (profile.role !== requiredRole) {
+        console.log(`Role mismatch: required ${requiredRole}, user has ${profile.role}`);
+        // Instead of redirecting to a generic dashboard, let's redirect based on their actual role.
+        switch (profile.role) {
+          case 'candidate':
+            navigate('/dashboard/candidat');
+            break;
+          case 'recruiter':
+            navigate('/dashboard/recruteur');
+            break;
+          case 'admin':
+            navigate('/dashboard/admin');
+            break;
+          default:
+            navigate('/acces-non-autorise'); // Fallback if role is unknown
+        }
+        return;
+      }
+
+      setLoading(false);
+    };
+
+    checkUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        navigate('/connexion');
       }
     });
 
-    return () => subscription.unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        navigate(redirectTo);
-        return;
-      }
-      
-      if (requiredRole && userProfile?.role !== requiredRole) {
-        navigate('/dashboard');
-        return;
-      }
-    }
-  }, [user, userProfile, loading, requiredRole, navigate, redirectTo]);
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [requiredRole, navigate]);
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
+            <p className="mt-4 text-lg text-foreground">Vérification de l'accès...</p>
+        </div>
       </div>
     );
   }
 
-  if (!user) {
-    return null;
-  }
-
-  if (requiredRole && userProfile?.role !== requiredRole) {
-    return null;
-  }
-
-  return <>{children}</>;
+  // Render children only if loading is complete and role matches
+  return user && userRole === requiredRole ? <>{children}</> : null;
 };
 
 export default AuthGuard;

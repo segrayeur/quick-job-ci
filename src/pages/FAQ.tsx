@@ -7,141 +7,133 @@ import { MessageCircle, Phone } from "lucide-react";
 const FAQ = () => {
   const faqItems = [
     {
-      category: "À propos de QuickJob CI",
+      category: "Général",
       questions: [
         {
           question: "Qu'est-ce que QuickJob CI ?",
-          answer: "QuickJob CI est une plateforme ivoirienne qui connecte les jeunes à la recherche de petits boulots avec les recruteurs, particuliers et entreprises. Notre mission est de faciliter l'accès rapide à des jobs rémunérateurs en Côte d'Ivoire."
-        }
-      ]
-    },
-    {
-      category: "Inscription candidats",
-      questions: [
-        {
-          question: "Comment créer un compte candidat ?",
-          answer: "L'inscription est gratuite pour tous les candidats. Vous pouvez créer un compte avec votre email, votre Google ou Facebook. Une fois inscrit, vous pouvez remplir votre profil (compétences, CV, ville, quartier)."
+          answer: "QuickJob CI est une plateforme ivoirienne conçue pour connecter rapidement et efficacement les talents locaux avec des opportunités de petits boulots, de missions freelance et d'emplois flexibles."
         },
         {
-          question: "Puis-je postuler à plusieurs offres ?",
-          answer: "Oui ! Les candidats peuvent postuler à toutes les offres sans limite. Il n'y a aucune restriction sur le nombre de candidatures."
-        }
-      ]
-    },
-    {
-      category: "Inscription recruteurs",
-      questions: [
-        {
-          question: "Comment publier une annonce ?",
-          answer: "Les recruteurs doivent créer un compte pour publier des annonces. Ils peuvent choisir un plan d'abonnement (Standard, Pro, Entreprise). Les annonces doivent respecter nos règles (pas d'arnaques, pas de fausses offres)."
-        }
-      ]
-    },
-    {
-      category: "Plans et tarification",
-      questions: [
-        {
-          question: "Quels sont les tarifs ?",
-          answer: "• Gratuit (Candidats) : accès aux offres et candidatures illimitées\n• Standard (15 000 FCFA/mois, 1 semaine gratuite) : jusqu'à 10 annonces, accès aux CV\n• Pro (30 000 FCFA/mois, 1 semaine gratuite) : annonces illimitées, mise en avant, support prioritaire\n• Entreprise (sur devis) : multi-compte, dashboard RH dédié"
-        }
-      ]
-    },
-    {
-      category: "Paiements & sécurité",
-      questions: [
-        {
-          question: "Comment se font les paiements ?",
-          answer: "Tous les paiements se font via Paystack (Mobile Money, cartes bancaires). Les données des utilisateurs sont sécurisées avec Supabase + RLS. QuickJob CI ne partage jamais vos informations personnelles sans consentement."
-        }
-      ]
-    },
-    {
-      category: "Géolocalisation",
-      questions: [
-        {
           question: "Dans quelles villes QuickJob CI est-il disponible ?",
-          answer: "QuickJob CI est disponible dans toutes les villes principales : Abidjan, Bouaké, Yamoussoukro, San Pedro, Daloa, Korhogo, Man, Gagnoa, Abengourou. Les offres peuvent être filtrées par ville et quartier. Une carte interactive permet de voir les jobs autour de vous."
+          answer: "Nous sommes disponibles dans les principales villes de Côte d'Ivoire, notamment Abidjan, Bouaké, et Yamoussoukro, avec une expansion continue. Notre système de filtre vous permet de rechercher des opportunités par ville, commune et même quartier."
+        }
+      ]
+    },
+    {
+      category: "Pour les Candidats",
+      questions: [
+        {
+          question: "L'inscription est-elle gratuite ?",
+          answer: "Oui, l'inscription est 100% gratuite pour les candidats. Avec un compte gratuit, vous pouvez créer votre profil, spécifier vos compétences et commencer à postuler."
+        },
+        {
+          question: "Combien de candidatures puis-je envoyer ?",
+          answer: "Le nombre de candidatures dépend de votre plan :\n• Plan Gratuit : 20 candidatures par mois.\n• Plan Standard (3000 FCFA/mois) : 45 candidatures par mois.\n• Plan Pro (7500 FCFA/mois) : 100 candidatures par mois."
+        },
+        {
+            question: "Qu'est-ce que les sous-secteurs ?",
+            answer: "Les sous-secteurs vous permettent de préciser vos domaines d'expertise (jusqu'à 5). Par exemple, un professionnel de la restauration peut indiquer 'Service en salle', 'Cuisine', ou 'Plonge'. Cela aide les recruteurs à vous trouver plus facilement."
+        }
+      ]
+    },
+    {
+      category: "Pour les Recruteurs",
+      questions: [
+        {
+          question: "Comment publier une offre d'emploi ?",
+          answer: "Après avoir créé votre compte recruteur, vous pouvez commencer à publier des offres. Le nombre d'offres que vous pouvez publier dépend de votre abonnement."
+        },
+        {
+          question: "Quels sont les quotas de publication ?",
+          answer: "Nos plans pour recruteurs sont les suivants :\n• Plan Gratuit : 30 publications d'offres par mois.\n• Plan Standard (1500 FCFA/mois) : 65 publications par mois.\n• Plan Pro (3000 FCFA/mois) : Publications illimitées et mise en avant des offres."
+        }
+      ]
+    },
+    {
+      category: "Paiements et Sécurité",
+      questions: [
+        {
+          question: "Les paiements sont-ils sécurisés ?",
+          answer: "Absolument. Tous les paiements pour les abonnements sont traités de manière sécurisée. Nous utilisons des fournisseurs de paiement réputés pour garantir la protection de vos informations."
+        },
+        {
+          question: "Comment mes données sont-elles protégées ?",
+          answer: "La sécurité de vos données est notre priorité. Nous utilisons l'authentification sécurisée et les Row Level Security (RLS) de Supabase pour garantir que seul vous pouvez accéder à vos informations personnelles et les modifier."
         }
       ]
     }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-cosmic">
+    <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-foreground mb-4">
-              Questions Fréquemment Posées
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+              Foire Aux Questions
             </h1>
             <p className="text-lg text-muted-foreground">
-              Trouvez rapidement les réponses à vos questions sur QuickJob CI
+              Toutes les réponses à vos questions se trouvent ici.
             </p>
           </div>
 
-          <div className="grid gap-8">
+          <div className="space-y-8">
             {faqItems.map((category, categoryIndex) => (
-              <Card key={categoryIndex} className="border-border/50 bg-card/50 backdrop-blur">
-                <CardHeader>
-                  <CardTitle className="text-xl text-foreground">
-                    {category.category}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Accordion type="single" collapsible className="w-full">
-                    {category.questions.map((item, questionIndex) => (
+              <div key={categoryIndex}>
+                <h2 className="text-2xl font-semibold text-foreground mb-4">{category.category}</h2>
+                <Accordion type="single" collapsible className="w-full">
+                  {category.questions.map((item, questionIndex) => (
+                    <Card key={questionIndex} className="mb-2">
                       <AccordionItem 
-                        key={questionIndex} 
                         value={`${categoryIndex}-${questionIndex}`}
-                        className="border-border/30"
+                        className="border-0"
                       >
-                        <AccordionTrigger className="text-left text-foreground hover:text-primary">
+                        <AccordionTrigger className="px-6 py-4 text-left text-foreground hover:no-underline">
                           {item.question}
                         </AccordionTrigger>
-                        <AccordionContent className="text-muted-foreground whitespace-pre-line">
+                        <AccordionContent className="px-6 pb-4 text-muted-foreground whitespace-pre-line">
                           {item.answer}
                         </AccordionContent>
                       </AccordionItem>
-                    ))}
-                  </Accordion>
-                </CardContent>
-              </Card>
+                    </Card>
+                  ))}
+                </Accordion>
+              </div>
             ))}
           </div>
 
-          {/* Support et contact */}
-          <Card className="mt-12 border-border/50 bg-card/50 backdrop-blur">
+          <Card className="mt-16">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl text-foreground">
-                Support & Contact
+                Besoin d'aide supplémentaire ?
               </CardTitle>
               <CardDescription>
-                Vous ne trouvez pas la réponse à votre question ? Contactez-nous !
+                Notre équipe est là pour vous assister.
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center space-y-4">
-              <p className="text-muted-foreground">
-                Vous pouvez nous contacter par email, WhatsApp ou via le chatbot.
-                L'équipe est disponible 7j/7 pour vous aider.
-              </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button 
-                  variant="default" 
+                  asChild
+                  variant="default"
                   className="gap-2"
-                  onClick={() => window.open('https://wa.me/+2250000000000?text=Bonjour 👋, comment puis-je vous aider ?', '_blank')}
                 >
-                  <MessageCircle className="h-4 w-4" />
-                  WhatsApp
+                  <a href="https://wa.me/+225XXXXXXXXXX?text=Bonjour, j'ai une question concernant QuickJob CI." target="_blank">
+                    <MessageCircle className="h-4 w-4" />
+                    Contact WhatsApp
+                  </a>
                 </Button>
                 <Button 
-                  variant="outline" 
+                  asChild
+                  variant="outline"
                   className="gap-2"
-                  onClick={() => window.location.href = '/contact'}
                 >
-                  <Phone className="h-4 w-4" />
-                  Nous contacter
+                  <a href="/contact">
+                    <Phone className="h-4 w-4" />
+                    Page de contact
+                  </a>
                 </Button>
               </div>
             </CardContent>

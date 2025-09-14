@@ -1,22 +1,17 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
-import { User, Session } from "@supabase/supabase-js";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import AuthGuard from "@/components/AuthGuard";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import SimpleProfile from "@/components/SimpleProfile";
-import RecruiterApplications from "@/components/RecruiterApplications";
-import RecruiterJobsManager from "@/components/RecruiterJobsManager";
 import RecruiterStats from "@/components/RecruiterStats";
+import RecruiterJobsManager from "@/components/RecruiterJobsManager";
+import RecruiterApplications from "@/components/RecruiterApplications";
 import RecruiterSubscriptionManager from "@/components/RecruiterSubscriptionManager";
-import NotificationSystem from "@/components/NotificationSystem";
-import CrossNotificationSystem from "@/components/CrossNotificationSystem";
-import EnhancedChatRAG from "@/components/EnhancedChatRAG";
 
 interface UserProfile {
   id: string;
+  user_id: string;
   role: 'recruiter';
   first_name: string;
   last_name: string;
@@ -36,46 +31,19 @@ interface UserProfile {
   vip_expiry_date?: string;
 }
 
+// Define the possible views
+type ActiveView = 'profile' | 'stats' | 'jobs' | 'applications' | 'subscription' | 'notifications';
+
 const DashboardRecruteur = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [chatRAGOpen, setChatRAGOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  // State for single-view navigation
+  const [activeView, setActiveView] = useState<ActiveView>('profile'); 
   const navigate = useNavigate();
-  const { toast } = useToast();
-
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          await fetchUserData(session.user.id);
-        } else {
-          navigate("/connexion");
-        }
-        setLoading(false);
-      }
-    );
-
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        await fetchUserData(session.user.id);
-      } else {
-        navigate("/connexion");
-      }
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
 
   const fetchUserData = async (userId: string) => {
+    setLoading(true);
     try {
       const { data: profile, error } = await supabase
         .from('users')
@@ -83,87 +51,85 @@ const DashboardRecruteur = () => {
         .eq('user_id', userId)
         .eq('role', 'recruiter')
         .single();
-      
       if (error || !profile) {
-        console.error('Error fetching recruiter data:', error);
-        navigate("/acces-non-autorise");
-        return;
+        throw new Error(error?.message || "Profil recruteur non trouvé.");
       }
-      
-      profile.jobs_published = profile.jobs_published || 0;
-      profile.subscription_plan = profile.subscription_plan || 'free';
-      profile.applications_created_count = profile.applications_created_count || 0;
-      profile.is_vip_candidate = profile.is_vip_candidate || false;
       setUserProfile(profile as UserProfile);
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-      navigate("/acces-non-autorise");
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const refreshProfile = async () => {
-    if (user?.id) {
-      await fetchUserData(user.id);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user.id) {
+      await fetchUserData(session.user.id);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-foreground">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Chargement de votre dashboard recruteur...</p>
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    const fetchSessionAndProfile = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/connexion");
+        return;
+      }
+      await fetchUserData(session.user.id);
+    };
+    fetchSessionAndProfile();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') navigate('/connexion');
+    });
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
-  if (!userProfile) {
-    return null;
-  }
+  if (loading || !userProfile) return <div className="flex h-screen items-center justify-center">Chargement de votre espace...</div>;
+  if (error) return <div className="flex h-screen items-center justify-center">Erreur: {error}. Veuillez vous reconnecter.</div>;
+
+  // Function to render only the active component
+  const renderActiveView = () => {
+    switch (activeView) {
+      case 'profile':
+        return <section id="profile"><SimpleProfile userProfile={userProfile} onProfileUpdate={refreshProfile} /></section>;
+      case 'stats':
+        return <section id="stats"><RecruiterStats userProfile={userProfile} /></section>;
+      case 'jobs':
+        return <section id="jobs"><RecruiterJobsManager userProfile={userProfile} /></section>;
+      case 'applications':
+        return <section id="applications"><RecruiterApplications recruiterId={userProfile.id} /></section>;
+      case 'subscription':
+        return <section id="subscription"><RecruiterSubscriptionManager userProfile={userProfile} onSubscriptionChange={refreshProfile} /></section>;
+      case 'notifications':
+        return <section id="notifications"><div className="text-center py-10">La section des notifications est en cours de construction.</div></section>; // Placeholder
+      default:
+        return <section id="profile"><SimpleProfile userProfile={userProfile} onProfileUpdate={refreshProfile} /></section>;
+    }
+  };
 
   return (
-    <AuthGuard requiredRole="recruiter">
-      <div className="min-h-screen bg-gradient-cosmic animate-fade-in">
-        <SidebarProvider>
-          <div className="min-h-screen flex w-full">
-            <DashboardSidebar userRole="recruiter" />
-            
-            <SidebarInset className="flex-1">
-              <main className="flex-1 p-6">
-                <div className="animate-slide-up">
-                  <div className="mb-6">
-                    <h1 className="text-3xl font-bold text-foreground">Dashboard Recruteur</h1>
-                    <p className="text-muted-foreground">Gérez vos offres d'emploi et candidatures</p>
-                  </div>
-                  
-                  <SimpleProfile userProfile={userProfile} onProfileUpdate={refreshProfile} />
-                  <div className="mt-8">
-                    <RecruiterStats userProfile={userProfile} />
-                  </div>
-                  <div className="mt-8">
-                    <RecruiterJobsManager userProfile={userProfile} />
-                  </div>
-                  <div className="mt-8">
-                    <RecruiterApplications userProfile={userProfile} />
-                  </div>
-                  <div className="mt-8">
-                    <RecruiterSubscriptionManager userProfile={userProfile} onUpgrade={refreshProfile} />
-                  </div>
-                </div>
-              </main>
-            </SidebarInset>
-            
-            <CrossNotificationSystem userProfile={userProfile} />
-          </div>
-        </SidebarProvider>
-        
-        <EnhancedChatRAG 
-          isOpen={chatRAGOpen} 
-          onToggle={() => setChatRAGOpen(!chatRAGOpen)} 
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background">
+        <DashboardSidebar 
+          userRole="recruiter" 
+          activeView={activeView}
+          onViewChange={(view) => setActiveView(view as ActiveView)}
         />
+        <SidebarInset className="flex-1">
+          <main className="flex-1 p-6 space-y-8">
+              <div className="mb-6">
+                <h1 className="text-3xl font-bold text-foreground">Dashboard Recruteur</h1>
+                <p className="text-muted-foreground">Gérez vos offres d'emploi et candidatures depuis un seul endroit.</p>
+              </div>
+              
+              {/* Render only the active view */}
+              {renderActiveView()}
+
+          </main>
+        </SidebarInset>
       </div>
-    </AuthGuard>
+    </SidebarProvider>
   );
 };
 

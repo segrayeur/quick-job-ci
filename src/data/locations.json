@@ -1,0 +1,79 @@
+
+[
+  {
+    "ville": "Abidjan",
+    "communes": [
+      {
+        "nom": "Abobo",
+        "quartiers": ["Avocatier", "Akéikoi", "Placomine", "Sagbé"]
+      },
+      {
+        "nom": "Adjamé",
+        "quartiers": ["220 Logements", "Mairie 1", "St-Michel", "Williamsville"]
+      },
+      {
+        "nom": "Cocody",
+        "quartiers": ["Angré", "Deux-Plateaux", "Riviera", "Val Doyen"]
+      },
+      {
+        "nom": "Koumassi",
+        "quartiers": ["Grand Campement", "Sicogi", "Prodomo", "Remblais"]
+      },
+      {
+        "nom": "Marcory",
+        "quartiers": ["Anoumabo", "Biétry", "Zone 4", "Champagne"]
+      },
+      {
+        "nom": "Plateau",
+        "quartiers": ["Dokui", "Sideci", "Chu", "RAN"]
+      },
+      {
+        "nom": "Port-Bouët",
+        "quartiers": ["Adjouffou", "Phare", "Vridi", "Aéroport"]
+      },
+      {
+        "nom": "Treichville",
+        "quartiers": ["Arras", "Avenue 1", "Avenue 2", "Avenue 3"]
+      },
+      {
+        "nom": "Yopougon",
+        "quartiers": ["Ananeraie", "Figayo", "Gesco", "Wassakara"]
+      }
+    ]
+  },
+  {
+    "ville": "Yamoussoukro",
+    "communes": [
+      {
+        "nom": "Attiégouakro",
+        "quartiers": ["Assabou", "Lolobo", "Subiakro"]
+      },
+      {
+        "nom": "Yamoussoukro Commune",
+        "quartiers": ["220 Logements", "Dioulakro", "Habitat", "Morofé"]
+      }
+    ]
+  },
+  {
+    "ville": "Bouaké",
+    "communes": [
+      {
+        "nom": "Bouaké-Ville",
+        "quartiers": ["Air France", "Commerce", "Koko", "Nimbo"]
+      },
+      {
+        "nom": "Broukro",
+        "quartiers": ["Broukro-Village", "Extension"]
+      }
+    ]
+  },
+  {
+    "ville": "San-Pédro",
+    "communes": [
+        {
+            "nom": "San-Pédro Commune",
+            "quartiers": ["Bardot", "Cité", "Lac", "Port"]
+        }
+    ]
+  }
+]

@@ -260,7 +260,7 @@ const Index = () => {
             </p>
             <Button size="lg" className="bg-gradient-primary hover:opacity-90 transition-opacity" onClick={handlePublishClick}>
               <Users className="mr-2 h-5 w-5" />
-              Commencer maintenant
+              Créer votre offre
             </Button>
           </div>
         </div>
